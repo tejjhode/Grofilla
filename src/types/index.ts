@@ -23,6 +23,11 @@ export interface CartItem {
 }
 
 export interface Order {
+  orderDate: string | number | Date;
+  customerAddress: ReactNode;
+  customerName: ReactNode;
+  shopkeeperName: ReactNode;
+  orderId: Key | null | undefined;
   id: string;
   userId: string;
   items: CartItem[];

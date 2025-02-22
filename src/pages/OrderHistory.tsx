@@ -2,9 +2,8 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Package, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { fetchCustomerOrders } from '../store/slices/orderSlice';
-import { RootState, AppDispatch } from '../store';
+import { RootState } from '../store';
 
-// ✅ Helper Component for Status Icons
 const OrderStatusIcon = ({ status }: { status: string }) => {
   switch (status) {
     case 'PENDING':
@@ -21,7 +20,7 @@ const OrderStatusIcon = ({ status }: { status: string }) => {
 };
 
 const OrderHistory: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch();
   const { orders, loading, error } = useSelector((state: RootState) => state.orders);
 
   useEffect(() => {
@@ -46,8 +45,7 @@ const OrderHistory: React.FC = () => {
     );
   }
 
-  // ✅ Ensure `orders` is always an array before using `.map()`
-  if (!Array.isArray(orders) || orders.length === 0) {
+  if (orders.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-12">

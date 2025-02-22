@@ -87,6 +87,7 @@ export const addProduct = createAsyncThunk<Product, Product, { rejectValue: stri
       }
 
       const response = await api.post(`/products/add/${shopkeeperId}`, newProduct);
+      
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to add product');

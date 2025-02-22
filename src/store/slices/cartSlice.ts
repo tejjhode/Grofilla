@@ -17,16 +17,18 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addToCart: (state, action: PayloadAction<{ product: Product; quantity: number }>) => {
-      const { product, quantity } = action.payload;
+    addToCart: (state, action: PayloadAction<{ userId: number; product: Product; quantity: number }>) => {
+      const { userId, product, quantity } = action.payload;
       const existingItem = state.items.find(item => item.productId === product.id);
       
       if (existingItem) {
         existingItem.quantity += quantity;
       } else {
         state.items.push({
+          userId, 
           productId: product.id,
           quantity,
+          totalPrice: product.price * quantity, // Calculate total price
           product,
         });
       }
@@ -39,6 +41,7 @@ const cartSlice = createSlice({
       const item = state.items.find(item => item.productId === productId);
       if (item) {
         item.quantity = quantity;
+        item.totalPrice = item.product.price * quantity; // Update total price
       }
     },
     clearCart: (state) => {

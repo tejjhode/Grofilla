@@ -18,17 +18,39 @@ const ProductDetails: React.FC = () => {
     }
   }, [dispatch, id]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!user) {
       alert("You need to log in to add items to your cart.");
       return;
     }
-    console.log("Adding product to cart:", product); // Debugging log
-    console.log("User:", user.id);
-    const userId = user.id; // Debugging log
+  
+    const userId = user.id;
   
     if (product) {
-      dispatch(addToCart({user, product, quantity: 1 })); // ✅ Correct structure
+      try {
+        const response = await fetch("http://localhost:8080/api/cart/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId,
+            productId: product.id,
+            quantity: 1,
+            totalPrice: product.price, // Send total price
+          }),
+        });
+  
+        if (!response.ok) throw new Error("Failed to add item to cart");
+  
+        const data = await response.json();
+        console.log("Added to cart:", data);
+  
+        // Dispatch action to Redux
+        dispatch(addToCart({ userId, product, quantity: 1 }));
+      } catch (error) {
+        console.error("Error adding to cart:", error);
+      }
     }
   };
 
