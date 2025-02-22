@@ -36,17 +36,12 @@ export const placeOrder = createAsyncThunk<Order[], void, { state: RootState; re
       const response = await api.post(`/orders/place/${customerId}/${shopkeeperId}`, {}, {
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       });
-      console.log("Response:", response.data);
+      alert("Order placed successfully");
+      console.log(response.data?.id);
+      return response.data;
       
-      return response.data.map((order: any) => ({
-        orderId: order.id,
-        shopkeeperName: order.shopkeeper.name,
-        customerName: order.customer.name,
-        customerAddress: order.customer.address,
-        orderDate: order.orderDate,
-        status: order.status,
-        totalAmount: order.totalAmount,
-      }));
+      
+    
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to place order');
     }

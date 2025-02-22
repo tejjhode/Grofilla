@@ -15,6 +15,10 @@ const RegisterPage: React.FC = () => {
     email: '',
     password: '',
     role: 'CUSTOMER',
+    address: '',
+    phoneNumber: '',
+    shopName: '',
+    shopAddress: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -26,8 +30,18 @@ const RegisterPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const { role, name, email, password, address, phoneNumber, shopName, shopAddress } = formData;
+
+    const userData = {
+      name,
+      email,
+      password,
+      role,
+      ...(role === 'CUSTOMER' ? { address, phoneNumber } : { shopName, shopAddress }),
+    };
+
     try {
-      await dispatch(register(formData)).unwrap();
+      await dispatch(register(userData)).unwrap();
       navigate('/');
     } catch (err) {
       // Error is handled by the reducer
@@ -71,12 +85,13 @@ const RegisterPage: React.FC = () => {
                 required
                 value={formData.name}
                 onChange={handleChange}
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
               />
             </div>
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
+                Email Address
               </label>
               <input
                 id="email"
@@ -85,9 +100,10 @@ const RegisterPage: React.FC = () => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
               />
             </div>
+
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
@@ -99,9 +115,10 @@ const RegisterPage: React.FC = () => {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
               />
             </div>
+
             <div>
               <label htmlFor="role" className="block text-sm font-medium text-gray-700">
                 Account Type
@@ -111,12 +128,82 @@ const RegisterPage: React.FC = () => {
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
               >
                 <option value="CUSTOMER">Customer</option>
                 <option value="SHOPKEEPER">Shopkeeper</option>
               </select>
             </div>
+
+            {/* Extra fields for Customers */}
+            {formData.role === 'CUSTOMER' && (
+              <>
+                <div>
+                  <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+                    Address
+                  </label>
+                  <input
+                    id="address"
+                    name="address"
+                    type="text"
+                    required
+                    value={formData.address}
+                    onChange={handleChange}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700">
+                    Phone Number
+                  </label>
+                  <input
+                    id="phone_number"
+                    name="phone_number"
+                    type="text"
+                    required
+                    value={formData.phonNumber}
+                    onChange={handleChange}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Extra fields for Shopkeepers */}
+            {formData.role === 'SHOPKEEPER' && (
+              <>
+                <div>
+                  <label htmlFor="shop_name" className="block text-sm font-medium text-gray-700">
+                    Shop Name
+                  </label>
+                  <input
+                    id="shop_name"
+                    name="shop_name"
+                    type="text"
+                    required
+                    value={formData.shopName}
+                    onChange={handleChange}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="shop_address" className="block text-sm font-medium text-gray-700">
+                    Shop Address
+                  </label>
+                  <input
+                    id="shop_address"
+                    name="shop_address"
+                    type="text"
+                    required
+                    value={formData.shopAddress}
+                    onChange={handleChange}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                  />
+                </div>
+              </>
+            )}
           </div>
 
           <button

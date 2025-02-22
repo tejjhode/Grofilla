@@ -1,4 +1,3 @@
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../services/api";
 
@@ -8,6 +7,10 @@ interface User {
   name: string;
   email: string;
   role: "CUSTOMER" | "SHOPKEEPER";
+  address?: string;
+  phoneNumber?: string;
+  shopAddress?: string;
+  shopName?: string;
 }
 
 // Define Auth State
@@ -18,7 +21,7 @@ interface AuthState {
 }
 
 // Load User from Local Storage
-const storedUser = localStorage.getItem("shopkeeper");
+const storedUser = localStorage.getItem("user");
 const user: User | null = storedUser ? JSON.parse(storedUser) : null;
 
 // Initial State
@@ -39,22 +42,14 @@ export const login = createAsyncThunk(
       const endpoint = role === "SHOPKEEPER" ? "/api/shopkeepers/login" : "/api/customers/login";
       const response = await api.post(endpoint, { email, password });
 
-      console.log("Full API Response:", response.data);
-
       if (!response.data || !response.data.id) {
         throw new Error("Invalid login response");
       }
 
-      // ✅ Store the user object instead of token
-      localStorage.setItem("shopkeeper", JSON.stringify(response.data));
-      // localStorage.setItem("customer", JSON.stringify(response.data));
-
-      console.log(localStorage);
-
-      return response.data; // Return Shopkeeper or Customer data
-
+      // ✅ Store user data
+      localStorage.setItem("user", JSON.stringify(response.data));
+      return response.data;
     } catch (error: any) {
-      console.error("Login API error:", error);
       return rejectWithValue(error.response?.data?.message || error.message || "Login failed");
     }
   }
@@ -64,7 +59,16 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   "auth/register",
   async (
-    userData: { name: string; email: string; password: string; role: "CUSTOMER" | "SHOPKEEPER" },
+    userData: { 
+      name: string; 
+      email: string; 
+      password: string; 
+      role: "CUSTOMER" | "SHOPKEEPER"; 
+      address?: string;
+      phoneNumber?: string;
+      shopAddress?: string;
+      shopName?: string;
+    },
     { rejectWithValue }
   ) => {
     try {
@@ -75,11 +79,9 @@ export const register = createAsyncThunk(
         throw new Error("Invalid registration response");
       }
 
-      // ✅ Store the registered user
-      localStorage.setItem("shopkeeper", JSON.stringify(response.data));
-
+      // ✅ Store user data
+      localStorage.setItem("user", JSON.stringify(response.data));
       return response.data;
-
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Registration failed");
     }
@@ -93,33 +95,31 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null;
-      localStorage.removeItem("shopkeeper");
+      localStorage.removeItem("user");
     },
   },
   extraReducers: (builder) => {
     builder
-      // 🔹 Login
       .addCase(login.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload; // Store the user object
+        state.user = action.payload;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
 
-      // 🔹 Register
       .addCase(register.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload; // Store the registered user object
+        state.user = action.payload;
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
