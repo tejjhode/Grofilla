@@ -26,6 +26,7 @@ const CartPage: React.FC = () => {
       // Order created successfully
     } catch (error) {
       // Error handled by the reducer
+      throw error;
     }
   };
 

@@ -19,38 +19,51 @@ const initialState: OrderState = {
   shopkeeperId: null,
 };
 
-export const placeOrder = createAsyncThunk<Order[], void, { state: RootState; rejectValue: string }>(
-  'orders/placeOrder',
+export const placeOrder = createAsyncThunk<
+  Order, // ✅ Assuming API returns a single Order object
+  void,
+  { state: RootState; rejectValue: string }
+>(
+  "orders/placeOrder",
   async (_, { getState, rejectWithValue }) => {
     try {
-      const customerData = localStorage.getItem('shopkeeper');
-      if (!customerData) return rejectWithValue('Customer data not found in localStorage. Please log in.');
-      
+      // 🔹 Retrieve customer data from localStorage
+      const customerData = localStorage.getItem("user");
+      if (!customerData) return rejectWithValue("Customer data not found. Please log in.");
+
       const customer = JSON.parse(customerData);
       const customerId = customer?.id;
-      if (!customerId) return rejectWithValue('Customer ID not found. Please log in.');
+      if (!customerId) return rejectWithValue("Customer ID not found. Please log in.");
 
+      // 🔹 Retrieve shopkeeper ID from Redux state
       const shopkeeperId = getState().orders.shopkeeperId;
-      if (!shopkeeperId) return rejectWithValue('Shopkeeper ID not found. Please select a product first.');
+      if (!shopkeeperId) return rejectWithValue("Shopkeeper ID not found. Please select a product first.");
 
+      // 🔹 Send API request to place order
       const response = await api.post(`/orders/place/${customerId}/${shopkeeperId}`, {}, {
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
       });
+
+      // 🔹 Check if response is valid
+      if (!response.data || !response.data.id) {
+        return rejectWithValue("Invalid response from server.");
+      }
+
       alert("Order placed successfully");
-      console.log(response.data?.id);
-      return response.data;
-      
-      
-    
+      console.log("Order ID:", response.data.id);
+
+      return response.data; // ✅ Return the placed order
+
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to place order');
+      console.error("Order Placement Error:", error);
+      return rejectWithValue(error.response?.data?.message || "Failed to place order.");
     }
   }
 );
 
 export const fetchCustomerOrders = createAsyncThunk('orders/fetchCustomerOrders', async (_, { rejectWithValue }) => {
   try {
-    const customerData = localStorage.getItem('shopkeeper');
+    const customerData = localStorage.getItem('user');
     if (!customerData) return rejectWithValue('Customer data not found in localStorage. Please log in.');
     
     const customer = JSON.parse(customerData);
