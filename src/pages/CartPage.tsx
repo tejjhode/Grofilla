@@ -103,13 +103,13 @@ const CartPage: React.FC = () => {
               {items.map((item) => (
                 <div key={item.productId} className="flex justify-between text-gray-600">
                   <span>{item.product.name} (x{item.quantity})</span>
-                  <span>${(item.product.price * item.quantity).toFixed(2)}</span>
+                  <span>₹{(item.product.price * item.quantity).toFixed(2)}</span>
                 </div>
               ))}
               <div className="border-t pt-4">
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total</span>
-                  <span>${totalAmount.toFixed(2)}</span>
+                  <span>₹{totalAmount.toFixed(2)}</span>
                 </div>
               </div>
               <button
