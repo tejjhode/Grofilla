@@ -4,6 +4,9 @@ import { Package, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { fetchCustomerOrders } from '../store/slices/orderSlice';
 import { RootState } from '../store';
 
+// Sample customer ID (Replace with actual user ID from authentication)
+const customerId = 101;
+
 const OrderStatusIcon = ({ status }: { status: string }) => {
   switch (status) {
     case 'PENDING':
@@ -15,7 +18,7 @@ const OrderStatusIcon = ({ status }: { status: string }) => {
     case 'REJECTED':
       return <XCircle className="h-5 w-5 text-red-500" />;
     default:
-      return null;
+      return <span className="text-gray-500">Unknown</span>;
   }
 };
 
@@ -24,7 +27,7 @@ const OrderHistory: React.FC = () => {
   const { orders, loading, error } = useSelector((state: RootState) => state.orders);
 
   useEffect(() => {
-    dispatch(fetchCustomerOrders());
+    dispatch(fetchCustomerOrders(customerId));
   }, [dispatch]);
 
   if (loading) {
@@ -39,13 +42,13 @@ const OrderHistory: React.FC = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
-          {error}
+          Error: {error || "Something went wrong. Please try again later."}
         </div>
       </div>
     );
   }
 
-  if (orders.length === 0) {
+  if (!Array.isArray(orders) || orders.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-12">
@@ -62,42 +65,19 @@ const OrderHistory: React.FC = () => {
 
       <div className="space-y-6">
         {orders.map((order) => (
-          <div key={order.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div key={order.orderId} className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="p-6 border-b border-gray-200">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <p className="text-sm text-gray-500">Order ID: {order.id}</p>
+                  <p className="text-sm text-gray-500">Order ID: {order.orderId}</p>
                   <p className="text-sm text-gray-500">
-                    Placed on: {new Date(order.createdAt).toLocaleDateString()}
+                    Placed on: {new Date(order.orderDate).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <OrderStatusIcon status={order.status} />
                   <span className="font-semibold">{order.status}</span>
                 </div>
-              </div>
-
-              <div className="space-y-4">
-                {order.items.map((item) => (
-                  <div key={item.productId} className="flex items-center">
-                    <img
-                      src={item.product.imageUrl}
-                      alt={item.product.name}
-                      className="w-16 h-16 object-cover rounded"
-                    />
-                    <div className="ml-4 flex-1">
-                      <h3 className="font-semibold">{item.product.name}</h3>
-                      <p className="text-gray-600">
-                        Quantity: {item.quantity} × ${item.product.price.toFixed(2)}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold">
-                        ${(item.quantity * item.product.price).toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
 

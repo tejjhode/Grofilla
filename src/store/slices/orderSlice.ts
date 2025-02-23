@@ -72,7 +72,7 @@ export const fetchCustomerOrders = createAsyncThunk<
     const customer = JSON.parse(customerData);
     const customerId = customer?.id;
     const response = await api.get(`/orders/customer/${customerId}`);
-
+  // console.log(response.data);
     return response.data;
   } catch (error: any) {
     return rejectWithValue(error.response?.data || "Failed to fetch customer orders.");
