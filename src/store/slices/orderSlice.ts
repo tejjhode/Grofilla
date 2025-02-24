@@ -79,24 +79,25 @@ export const fetchCustomerOrders = createAsyncThunk<
   }
 });
 
-// ✅ Fetch Shopkeeper Orders
 export const fetchShopkeeperOrders = createAsyncThunk<
   Order[],
   void,
   { state: RootState; rejectValue: string }
 >("orders/fetchShopkeeperOrders", async (_, { getState, rejectWithValue }) => {
   try {
-    const shopkeeperId = getState().orders.shopkeeperId;
+    const shopkeeperData = localStorage.getItem('user');
+  const shopkeeperId =shopkeeperData ? JSON.parse(shopkeeperData).id : null;
+  // console.log("Shopkeeper ID:", shopkeeperId);
     if (!shopkeeperId) return rejectWithValue("Shopkeeper ID is missing.");
-
+     console.log("Shopkeeper ID:", shopkeeperId);
     const response = await api.get(`/orders/shopkeeper/${shopkeeperId}`);
+    console.log(response.data);
     return response.data;
   } catch (error: any) {
     return rejectWithValue(error.response?.data || "Failed to fetch shopkeeper orders.");
   }
 });
 
-// ✅ Update Order Status (Fix: `status` converted to string correctly)
 export const updateOrderStatus = createAsyncThunk<
   Order,
   { orderId: number; status: string },

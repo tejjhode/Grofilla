@@ -34,7 +34,7 @@ export const fetchShopkeeperProducts = createAsyncThunk<Product[], void, { rejec
   'products/fetchShopkeeperProducts',
   async (_, { rejectWithValue }) => {
     try {
-      const shopkeeperData = localStorage.getItem("shopkeeper");
+      const shopkeeperData = localStorage.getItem("user");
       if (!shopkeeperData) {
         return rejectWithValue("Shopkeeper data not found in localStorage. Please log in.");
       }

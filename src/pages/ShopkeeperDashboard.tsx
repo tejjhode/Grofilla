@@ -8,11 +8,14 @@ const ShopkeeperDashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { orders, loading, error } = useSelector((state: RootState) => state.orders);
   const [selectedTab, setSelectedTab] = useState<'pending' | 'all'>('pending');
-  const shopkeeperId = localStorage.getItem('shopkeeperId');
+
+  // Get shopkeeper ID from localStorage
+  const shopkeeperData = localStorage.getItem('user');
+  const shopkeeperId = shopkeeperData ? JSON.parse(shopkeeperData).id : null;
 
   useEffect(() => {
     if (shopkeeperId) {
-      dispatch(fetchShopkeeperOrders(shopkeeperId));
+      dispatch(fetchShopkeeperOrders());
     }
   }, [dispatch, shopkeeperId]);
 
@@ -24,12 +27,13 @@ const ShopkeeperDashboard: React.FC = () => {
     }
   };
 
+  if (loading) return <p>Loading orders...</p>;
+  if (error) return <p className="text-red-500">Error: {error}</p>;
+  if (!orders || !Array.isArray(orders)) return <p>No orders found.</p>;
+
   const pendingOrders = orders.filter((order) => order.status === 'PENDING');
   const displayedOrders = selectedTab === 'pending' ? pendingOrders : orders;
-
-  const totalRevenue = orders
-    .filter((order) => order.status === 'DELIVERED')
-    .reduce((sum, order) => sum + order.totalAmount, 0);
+  const totalRevenue = orders.filter((order) => order.status === 'DELIVERED').reduce((sum, order) => sum + order.totalAmount, 0);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -38,7 +42,7 @@ const ShopkeeperDashboard: React.FC = () => {
         {[ 
           { title: 'Total Orders', value: orders.length, icon: <Package className="h-6 w-6 text-blue-500" /> },
           { title: 'Pending Orders', value: pendingOrders.length, icon: <ShoppingBag className="h-6 w-6 text-yellow-500" /> },
-          { title: 'Total Revenue', value: `$${totalRevenue.toFixed(2)}`, icon: <DollarSign className="h-6 w-6 text-green-500" /> },
+          { title: 'Total Revenue', value: `₹${totalRevenue.toFixed(2)}`, icon: <DollarSign className="h-6 w-6 text-green-500" /> },
           { title: 'Growth', value: '+12.5%', icon: <TrendingUp className="h-6 w-6 text-purple-500" /> }
         ].map((stat, index) => (
           <div key={index} className="bg-white rounded-lg shadow-md p-6">
@@ -66,11 +70,11 @@ const ShopkeeperDashboard: React.FC = () => {
 
         <div className="divide-y divide-gray-200">
           {displayedOrders.length ? displayedOrders.map((order) => (
-            <div key={order.id} className="p-6">
+            <div key={order.orderId} className="p-6">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <p className="text-sm text-gray-500">Order ID: {order.id}</p>
-                  <p className="text-sm text-gray-500">Placed on: {new Date(order.createdAt).toLocaleDateString()}</p>
+                  <p className="text-sm text-gray-500">Order ID: {order.orderId}</p>
+                  <p className="text-sm text-gray-500">Placed on: {new Date(order.orderDate).toLocaleDateString()}</p>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                   order.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
@@ -80,31 +84,16 @@ const ShopkeeperDashboard: React.FC = () => {
                 }`}>{order.status}</span>
               </div>
 
-              <div className="space-y-4">
-                {order.items.map((item) => (
-                  <div key={item.productId} className="flex items-center">
-                    <img src={item.product.imageUrl} alt={item.product.name} className="w-16 h-16 object-cover rounded" />
-                    <div className="ml-4 flex-1">
-                      <h3 className="font-semibold">{item.product.name}</h3>
-                      <p className="text-gray-600">Quantity: {item.quantity} × ${item.product.price.toFixed(2)}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold">${(item.quantity * item.product.price).toFixed(2)}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
               <div className="mt-6 flex justify-between items-center">
-                <div className="text-xl font-bold">Total: ${order.totalAmount.toFixed(2)}</div>
+                <div className="text-xl font-bold">Total: ₹{order.totalAmount.toFixed(2)}</div>
                 {order.status === 'PENDING' && (
                   <div className="space-x-4">
                     <button
-                      onClick={() => handleUpdateStatus(order.id, 'REJECTED')}
+                      onClick={() => handleUpdateStatus(order.orderId, 'REJECTED')}
                       className="px-4 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50"
                     >Reject</button>
                     <button
-                      onClick={() => handleUpdateStatus(order.id, 'ACCEPTED')}
+                      onClick={() => handleUpdateStatus(order.orderId, 'ACCEPTED')}
                       className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                     >Accept</button>
                   </div>

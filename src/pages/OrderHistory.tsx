@@ -5,7 +5,7 @@ import { fetchCustomerOrders } from '../store/slices/orderSlice';
 import { RootState } from '../store';
 
 // Sample customer ID (Replace with actual user ID from authentication)
-const customerId = 101;
+// const customerId = 101;
 
 const OrderStatusIcon = ({ status }: { status: string }) => {
   switch (status) {
@@ -85,7 +85,7 @@ const OrderHistory: React.FC = () => {
               <div className="flex justify-between items-center">
                 <span className="font-semibold">Total Amount</span>
                 <span className="text-xl font-bold text-green-600">
-                  ${order.totalAmount.toFixed(2)}
+                  ₹{order.totalAmount.toFixed(2)}
                 </span>
               </div>
             </div>
