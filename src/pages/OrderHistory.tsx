@@ -4,8 +4,7 @@ import { Package, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { fetchCustomerOrders } from '../store/slices/orderSlice';
 import { RootState } from '../store';
 
-// Sample customer ID (Replace with actual user ID from authentication)
-// const customerId = 101;
+const customerId = '0'; 
 
 const OrderStatusIcon = ({ status }: { status: string }) => {
   switch (status) {
