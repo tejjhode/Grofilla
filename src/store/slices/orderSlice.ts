@@ -48,7 +48,7 @@ export const placeOrder = createAsyncThunk<
       }
 
       alert("Order placed successfully");
-      console.log("Order ID:", response.data.id);
+      // console.log("Order ID:", response.data.id);
 
       return response.data; // ✅ Return the newly created order
 
@@ -89,9 +89,9 @@ export const fetchShopkeeperOrders = createAsyncThunk<
   const shopkeeperId =shopkeeperData ? JSON.parse(shopkeeperData).id : null;
   // console.log("Shopkeeper ID:", shopkeeperId);
     if (!shopkeeperId) return rejectWithValue("Shopkeeper ID is missing.");
-     console.log("Shopkeeper ID:", shopkeeperId);
+    //  console.log("Shopkeeper ID:", shopkeeperId);
     const response = await api.get(`/orders/shopkeeper/${shopkeeperId}`);
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   } catch (error: any) {
     return rejectWithValue(error.response?.data || "Failed to fetch shopkeeper orders.");

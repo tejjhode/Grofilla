@@ -23,7 +23,7 @@ const ShopkeeperDashboard: React.FC = () => {
     try {
       await dispatch(updateOrderStatus({ orderId, shopkeeperId, status })).unwrap();
     } catch (error) {
-      console.error('Error updating order status:', error);
+      throw error;
     }
   };
 

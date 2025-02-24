@@ -44,13 +44,13 @@ const ProductDetails: React.FC = () => {
         if (!response.ok) throw new Error("Failed to add item to cart");
   
         const data = await response.json();
-        console.log("Added to cart:", data);
+        // console.log("Added to cart:", data);
   
         // Dispatch action to Redux
         dispatch(addToCart({ userId, product, quantity: 1 }));
       } catch (error) {
-        console.error("Error adding to cart:", error);
-      }
+        throw error;
+            }
     }
   };
 
