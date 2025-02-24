@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Package, ShoppingBag, DollarSign, TrendingUp } from 'lucide-react';
+import { Package, ShoppingBag, DollarSign, TrendingUp, IndianRupee } from 'lucide-react';
 import { fetchShopkeeperOrders, updateOrderStatus } from '../store/slices/orderSlice';
 import { RootState, AppDispatch } from '../store';
 
@@ -42,7 +42,7 @@ const ShopkeeperDashboard: React.FC = () => {
         {[ 
           { title: 'Total Orders', value: orders.length, icon: <Package className="h-6 w-6 text-blue-500" /> },
           { title: 'Pending Orders', value: pendingOrders.length, icon: <ShoppingBag className="h-6 w-6 text-yellow-500" /> },
-          { title: 'Total Revenue', value: `₹${totalRevenue.toFixed(2)}`, icon: <DollarSign className="h-6 w-6 text-green-500" /> },
+          { title: 'Total Revenue', value: `₹${totalRevenue.toFixed(2)}`, icon: <IndianRupee className="h-6 w-6 text-green-500" /> },
           { title: 'Growth', value: '+12.5%', icon: <TrendingUp className="h-6 w-6 text-purple-500" /> }
         ].map((stat, index) => (
           <div key={index} className="bg-white rounded-lg shadow-md p-6">
