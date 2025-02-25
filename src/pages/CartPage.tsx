@@ -1,41 +1,69 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Trash2, Plus, Minus } from 'lucide-react';
-import { removeFromCart, updateQuantity } from '../store/slices/cartSlice';
+import { removeFromCart, updateQuantity, fetchCart } from '../store/slices/cartSlice';
 import { placeOrder } from '../store/slices/orderSlice';
 import { RootState } from '../store';
 
 const CartPage: React.FC = () => {
   const dispatch = useDispatch();
-  const { items } = useSelector((state: RootState) => state.cart);
-  const { loading } = useSelector((state: RootState) => state.orders);
+  const { items = [], loading } = useSelector((state: RootState) => state.cart); // Ensure items is always an array
+  const [userId, setUserId] = useState<string | null>(null);
 
+  // Get userId from local storage
+  useEffect(() => {
+    const customerData = localStorage.getItem("user");
+    try {
+      if (customerData) {
+        const customer = JSON.parse(customerData);
+        setUserId(customer?.id || null);
+      }
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+      setUserId(null);
+    }
+  }, []);
+
+  // Fetch cart when userId is available
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchCart(userId));
+    }
+  }, [userId, dispatch]);
+
+  // Handlers
   const handleRemoveItem = (productId: string) => {
-    dispatch(removeFromCart(productId));
+    if (userId) {
+      dispatch(removeFromCart({ userId, productId }));
+    }
   };
 
   const handleUpdateQuantity = (productId: string, newQuantity: number) => {
-    if (newQuantity > 0) {
-      dispatch(updateQuantity({ productId, quantity: newQuantity }));
+    if (userId && newQuantity > 0) {
+      dispatch(updateQuantity({ userId, productId, quantity: newQuantity }));
     }
   };
 
   const handleCheckout = async () => {
     try {
-      await dispatch(placeOrder(items)).unwrap();
-      // Order created successfully
+      if (userId) {
+        await dispatch(placeOrder({ userId, items })).unwrap();
+      }
     } catch (error) {
-      // Error handled by the reducer
-      throw error;
+      console.error("Checkout failed:", error);
     }
   };
 
-  const totalAmount = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
+  // Calculate total
+  const totalAmount = Array.isArray(items)
+    ? items.reduce((sum, item) => sum + (item.product?.price || 0) * (item.quantity || 0), 0)
+    : 0;
 
-  if (items.length === 0) {
+  if (loading) {
+    return <div className="text-center py-8">Loading your cart...</div>;
+  }
+
+  if (!items.length) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-12">
@@ -53,20 +81,20 @@ const CartPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            {items.map((item) => (
+          {Array.isArray(items) ? items.map((item) => (
               <div
                 key={item.productId}
                 className="flex items-center p-6 border-b border-gray-200 last:border-b-0"
               >
                 <img
-                  src={item.product.imageUrl}
-                  alt={item.product.name}
+                  src={item.product?.imageUrl || ''}
+                  alt={item.product?.name || 'Product'}
                   className="w-24 h-24 object-cover rounded"
                 />
                 <div className="flex-1 ml-6">
-                  <h3 className="text-lg font-semibold">{item.product.name}</h3>
-                  <p className="text-gray-600 text-sm mb-2">{item.product.category}</p>
-                  <p className="text-green-600 font-bold">${item.product.price.toFixed(2)}</p>
+                  <h3 className="text-lg font-semibold">{item.product?.name || 'Unnamed Product'}</h3>
+                  <p className="text-gray-600 text-sm mb-2">{item.product?.category || 'Category'}</p>
+                  <p className="text-green-600 font-bold">₹{(item.product?.price || 0).toFixed(2)}</p>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
@@ -92,7 +120,7 @@ const CartPage: React.FC = () => {
                   </button>
                 </div>
               </div>
-            ))}
+            )) : null}
           </div>
         </div>
 
@@ -102,8 +130,8 @@ const CartPage: React.FC = () => {
             <div className="space-y-4">
               {items.map((item) => (
                 <div key={item.productId} className="flex justify-between text-gray-600">
-                  <span>{item.product.name} (x{item.quantity})</span>
-                  <span>₹{(item.product.price * item.quantity).toFixed(2)}</span>
+                  <span>{item.product?.name} (x{item.quantity})</span>
+                  <span>₹{((item.product?.price || 0) * item.quantity).toFixed(2)}</span>
                 </div>
               ))}
               <div className="border-t pt-4">

@@ -37,20 +37,20 @@ const ProductDetails: React.FC = () => {
             userId,
             productId: product.id,
             quantity: 1,
-            totalPrice: product.price, // Send total price
+            totalPrice: product.price,
+            imageUrl: product.imageUrl, // 🛠️ Send image URL in request
           }),
         });
   
         if (!response.ok) throw new Error("Failed to add item to cart");
   
         const data = await response.json();
-        // console.log("Added to cart:", data);
-  
+        
         // Dispatch action to Redux
         dispatch(addToCart({ userId, product, quantity: 1 }));
       } catch (error) {
-        throw error;
-            }
+        console.error("Error adding to cart:", error);
+      }
     }
   };
 

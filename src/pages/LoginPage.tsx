@@ -59,15 +59,14 @@ const LoginPage: React.FC = () => {
   // }
 
   try {
-    console.log("Submitting login request with:", formData); // Debugging log
 
     const response = await dispatch(login(formData)).unwrap();
 
-    console.log("Login successful, response:", response);
+    // console.log("Login successful, response:", response);
 
     // ✅ Ensure response contains valid user data before navigating
     if (response && response.id) {
-        console.log("Navigating to home...");
+        // console.log("Navigating to home...");
         navigate('/');
     } else {
         console.warn("Unexpected response:", response);
