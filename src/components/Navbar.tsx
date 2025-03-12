@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { ShoppingCart, User, LogOut } from 'lucide-react';
+import { ShoppingCart, User, LogOut, MapPin } from 'lucide-react';
 import { RootState } from '../store';
 import { logout } from '../store/slices/authSlice';
 
@@ -41,6 +41,10 @@ const Navbar: React.FC = () => {
                     </Link>
                     <Link to="/orders" className="text-gray-700 hover:text-green-600">
                       Orders
+                    </Link>
+                    <Link to="/track-order" className="text-gray-700 hover:text-green-600 flex items-center">
+                      <MapPin className="h-5 w-5 mr-1" />
+                      Track Order
                     </Link>
                   </>
                 )}

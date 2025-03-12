@@ -15,6 +15,7 @@ import OrderHistory from './pages/OrderHistory';
 import ShopkeeperDashboard from './pages/ShopkeeperDashboard';
 import AddProduct from './pages/AddProduct';
 import EditProduct from './pages/EditProduct';
+import TrackOrder from './pages/TrackOrder';
 
 function App() {
   return (
@@ -44,6 +45,14 @@ function App() {
                 element={
                   <PrivateRoute role="CUSTOMER">
                     <OrderHistory />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/track-order"
+                element={
+                  <PrivateRoute role="CUSTOMER">
+                    <TrackOrder />
                   </PrivateRoute>
                 }
               />
