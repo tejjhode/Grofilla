@@ -42,10 +42,10 @@ const Navbar: React.FC = () => {
                     <Link to="/orders" className="text-gray-700 hover:text-green-600">
                       Orders
                     </Link>
-                    <Link to="/track-order" className="text-gray-700 hover:text-green-600 flex items-center">
+                    {/* <Link to="/track-order" className="text-gray-700 hover:text-green-600 flex items-center">
                       <MapPin className="h-5 w-5 mr-1" />
                       Track Order
-                    </Link>
+                    </Link> */}
                   </>
                 )}
                 

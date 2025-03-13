@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Package, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Package, Clock, CheckCircle, XCircle, MapPin } from 'lucide-react';
 import { fetchCustomerOrders } from '../store/slices/orderSlice';
 import { RootState } from '../store';
+import { Link } from 'react-router-dom';
 
 const customerId = '0'; 
 
@@ -78,6 +79,19 @@ const OrderHistory: React.FC = () => {
                   <span className="font-semibold">{order.status}</span>
                 </div>
               </div>
+
+              {/* ✅ Only show "Track Order" when status is ACCEPTED */}
+              {order.status === "ACCEPTED" && (
+                <div>
+                  <Link
+                    to={`/track-order`}
+                    className="text-gray-700 hover:text-green-600 flex items-center"
+                  >
+                    <MapPin className="h-5 w-5 mr-1" />
+                    Track Order
+                  </Link>
+                </div>
+              )}
             </div>
 
             <div className="bg-gray-50 px-6 py-4">
