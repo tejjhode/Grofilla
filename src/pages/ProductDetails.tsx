@@ -34,11 +34,12 @@ const ProductDetails: React.FC = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            id,
             userId,
             productId: product.id,
             quantity: 1,
             totalPrice: product.price,
-            imageUrl: product.imageUrl // Send total price
+            imageUrl: product.imageUrl 
           }),
         });
   
