@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://grofilla-backened.onrender.com',
-  timeout: 10000, // Set a timeout to prevent infinite waiting
+  baseURL: 'http://localhost:8080',
+  timeout: 10000, 
 });
 
 // Request interceptor for adding auth token

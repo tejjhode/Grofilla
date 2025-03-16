@@ -44,7 +44,7 @@ const TrackOrder: React.FC = () => {
   useEffect(() => {
     const fetchTrackingData = async () => {
       try {
-        const response = await fetch(`https://grofilla-backened.onrender.com/api/tracking/${orderId}`);
+        const response = await fetch(`http://localhost:8080//api/tracking/123`);
         if (!response.ok) throw new Error('Failed to fetch tracking data');
         const data = await response.json();
         if (data.latitude && data.longitude) {

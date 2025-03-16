@@ -28,13 +28,12 @@ const ProductDetails: React.FC = () => {
   
     if (product) {
       try {
-        const response = await fetch("https://grofilla-backened.onrender.com/api/cart/add", {
+        const response = await fetch("http://localhost:8080/api/cart/add", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            id,
             userId,
             productId: product.id,
             quantity: 1,
@@ -42,6 +41,7 @@ const ProductDetails: React.FC = () => {
             imageUrl: product.imageUrl 
           }),
         });
+        console.log(response);
   
         if (!response.ok) throw new Error("Failed to add item to cart");
   

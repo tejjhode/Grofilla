@@ -5,6 +5,7 @@ import { Product } from '../../types';
 interface ProductState {
   products: Product[];
   selectedProduct: Product | null;
+  searchTerm: string;
   loading: boolean;
   error: string | null;
 }
@@ -12,6 +13,7 @@ interface ProductState {
 const initialState: ProductState = {
   products: [],
   selectedProduct: null,
+  searchTerm: '',
   loading: false,
   error: null,
 };
@@ -54,6 +56,7 @@ export const fetchShopkeeperProducts = createAsyncThunk<Product[], void, { rejec
   }
 );
 
+// ✅ Fetch product by ID
 export const fetchProductById = createAsyncThunk<Product, string, { rejectValue: string }>(
   'products/fetchProductById',
   async (id, { rejectWithValue }) => {
@@ -70,6 +73,7 @@ export const fetchProductById = createAsyncThunk<Product, string, { rejectValue:
   }
 );
 
+// ✅ Add a new product
 export const addProduct = createAsyncThunk<Product, Product, { rejectValue: string }>(
   'products/addProduct',
   async (newProduct, { rejectWithValue }) => {
@@ -87,15 +91,15 @@ export const addProduct = createAsyncThunk<Product, Product, { rejectValue: stri
       }
 
       const response = await api.post(`/products/add/${shopkeeperId}`, newProduct);
-      
       return response.data;
+
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to add product');
     }
   }
 );
 
-// ✅ Update an existing product (Shopkeeper)
+// ✅ Update an existing product
 export const updateProduct = createAsyncThunk<Product, { id: string; updatedData: Partial<Product> }, { rejectValue: string }>(
   'products/updateProduct',
   async ({ id, updatedData }, { rejectWithValue }) => {
@@ -129,7 +133,9 @@ const productSlice = createSlice({
     resetSelectedProduct: (state) => {
       state.selectedProduct = null;
     },
-    
+    setSearchTerm: (state, action) => {
+      state.searchTerm = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -167,7 +173,6 @@ const productSlice = createSlice({
         state.loading = false;
         state.selectedProduct = action.payload;
       })
-      
       .addCase(fetchProductById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to fetch product';
@@ -207,5 +212,5 @@ const productSlice = createSlice({
   },
 });
 
-export const { resetSelectedProduct } = productSlice.actions;
+export const { resetSelectedProduct, setSearchTerm } = productSlice.actions;
 export default productSlice.reducer;
