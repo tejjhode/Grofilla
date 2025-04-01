@@ -50,30 +50,33 @@ const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section with Auto Slide */}
-      <div className="relative bg-cover bg-center h-[500px] overflow-hidden">
-        <div
-          className="absolute inset-0 bg-black bg-opacity-50"
-        />
-        <div className="relative container mx-auto px-4 h-full flex items-center justify-center text-center text-white">
-          <div className="max-w-2xl">
-            <h1 className="text-5xl font-bold mb-6 leading-tight">
-              Fresh Groceries Delivered to Your Door
-            </h1>
-            <p className="text-xl mb-8">
-              Shop from local stores and get your groceries delivered within hours.
-            </p>
-            <button
-              onClick={() => navigate('/products')}
-              className="bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors"
-            >
-              Shop Now
-            </button>
-          </div>
-        </div>
-        {/* Promotional Discount Banner */}
-        <div className="absolute bottom-0 left-0 right-0 bg-green-700 text-white py-2 text-center text-lg font-semibold">
-          <p>🎉 Limited Time Offer! Get 20% off on all first-time orders! 🎉</p>
-        </div>
+      <div className="relative bg-cover bg-center h-[3i800px] sm:h-[400px] md:h-[500px] overflow-hidden" 
+  style={{
+    backgroundImage:
+      'url("https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80")',
+  }}>
+  <div className="absolute inset-0 bg-black bg-opacity-50" />
+  <div className="relative container mx-auto px-4 h-full flex items-center justify-center text-center text-white">
+    <div className="max-w-2xl">
+      <h1 className="text-4xl sm:text-5xl font-bold mb-6 leading-tight">
+        Fresh Groceries Delivered to Your Door
+      </h1>
+      <p className="text-lg sm:text-xl mb-8">
+        Shop from local stores and get your groceries delivered within hours.
+      </p>
+      <button
+        onClick={() => navigate('/products')}
+        className="bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors"
+      >
+        Shop Now
+      </button>
+    </div>
+  </div>
+  {/* Promotional Discount Banner */}
+  <div className="absolute bottom-0 left-0 right-0 bg-green-700 text-white py-2 text-center text-sm sm:text-lg font-semibold">
+    <p>🎉 Limited Time Offer! Get 20% off on all first-time orders! 🎉</p>
+  </div>
+
         {/* Background Image */}
         <div
           className="absolute inset-0 transition-all duration-500 ease-in-out"
