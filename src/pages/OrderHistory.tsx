@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Package, Clock, CheckCircle, XCircle, MapPin } from 'lucide-react';
 import { fetchCustomerOrders } from '../store/slices/orderSlice';
 import { RootState } from '../store';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-const customerId = '0'; 
+const customerId = '0';
 
 const OrderStatusIcon = ({ status }: { status: string }) => {
   switch (status) {
@@ -24,11 +24,16 @@ const OrderStatusIcon = ({ status }: { status: string }) => {
 
 const OrderHistory: React.FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { orders, loading, error } = useSelector((state: RootState) => state.orders);
 
   useEffect(() => {
     dispatch(fetchCustomerOrders(customerId));
   }, [dispatch]);
+
+  const handleOrderClick = (orderId: string) => {
+    navigate(`/order-details/${orderId}`);
+  };
 
   if (loading) {
     return (
@@ -42,7 +47,7 @@ const OrderHistory: React.FC = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
-          Error: {error || "Something went wrong. Please try again later."}
+          Error: {error || 'Something went wrong. Please try again later.'}
         </div>
       </div>
     );
@@ -59,52 +64,60 @@ const OrderHistory: React.FC = () => {
     );
   }
 
+  const orderItems: JSX.Element[] = [];
+
+  for (let i = 0; i < orders.length; i++) {
+    const order = orders[i];
+    orderItems.push(
+      <div
+        key={order.orderId}
+        className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer"
+        onClick={() => handleOrderClick(order.orderId)}
+      >
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <p className="text-sm text-gray-500">Order ID: {order.orderId}</p>
+              <p className="text-sm text-gray-500">
+                Placed on: {new Date(order.orderDate).toLocaleDateString()}
+              </p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <OrderStatusIcon status={order.status} />
+              <span className="font-semibold">{order.status}</span>
+            </div>
+          </div>
+
+          {order.status === 'ACCEPTED' && (
+            <div>
+              <Link
+                to={`/track-order`}
+                className="text-gray-700 hover:text-green-600 flex items-center"
+              >
+                <MapPin className="h-5 w-5 mr-1" />
+                Track Order
+              </Link>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-gray-50 px-6 py-4">
+          <div className="flex justify-between items-center">
+            <span className="font-semibold">Total Amount</span>
+            <span className="text-xl font-bold text-green-600">
+              ₹{order.totalAmount.toFixed(2)}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Order History</h1>
 
-      <div className="space-y-6">
-        {orders.map((order) => (
-          <div key={order.orderId} className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="p-6 border-b border-gray-200">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <p className="text-sm text-gray-500">Order ID: {order.orderId}</p>
-                  <p className="text-sm text-gray-500">
-                    Placed on: {new Date(order.orderDate).toLocaleDateString()}
-                  </p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <OrderStatusIcon status={order.status} />
-                  <span className="font-semibold">{order.status}</span>
-                </div>
-              </div>
-
-              {/* ✅ Only show "Track Order" when status is ACCEPTED */}
-              {order.status === "ACCEPTED" && (
-                <div>
-                  <Link
-                    to={`/track-order`}
-                    className="text-gray-700 hover:text-green-600 flex items-center"
-                  >
-                    <MapPin className="h-5 w-5 mr-1" />
-                    Track Order
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            <div className="bg-gray-50 px-6 py-4">
-              <div className="flex justify-between items-center">
-                <span className="font-semibold">Total Amount</span>
-                <span className="text-xl font-bold text-green-600">
-                  ₹{order.totalAmount.toFixed(2)}
-                </span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <div className="space-y-6">{orderItems}</div>
     </div>
   );
 };

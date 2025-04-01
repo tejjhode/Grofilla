@@ -44,7 +44,7 @@ const TrackOrder: React.FC = () => {
   useEffect(() => {
     const fetchTrackingData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080//api/tracking/123`);
+        const response = await fetch(`http://localhost:8080//api/tracking/123dç`);
         if (!response.ok) throw new Error('Failed to fetch tracking data');
         const data = await response.json();
         if (data.latitude && data.longitude) {
@@ -76,7 +76,7 @@ const TrackOrder: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full h-screen">
+    <div className="w-full h-screen ">
       <h2 className="text-2xl font-bold text-center py-4 bg-white shadow-lg">Track Your Order</h2>
       {userLocation ? (
         <MapContainer center={[orderLocation.lat, orderLocation.lng]} zoom={15} className="w-full h-full">
