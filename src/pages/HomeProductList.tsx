@@ -35,7 +35,7 @@ const HomeProductList: React.FC = () => {
     if (!categorizedProducts[product.category]) {
       categorizedProducts[product.category] = [];
     }
-    if (categorizedProducts[product.category].length < 6) {
+    if (categorizedProducts[product.category].length < 5) {
       categorizedProducts[product.category].push(product);
     }
   });
@@ -71,11 +71,11 @@ const HomeProductList: React.FC = () => {
           🔥 Top Selling Products
         </motion.h2>
         <div className="overflow-x-auto hide-scrollbar">
-          <div className="flex gap-6 flex-wrap justify-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {topSellingProducts.map((product) => (
               <motion.div
                 key={product.id}
-                className="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl max-w-xs w-full"
+                className="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl"
                 whileHover={{ scale: 1.05 }}
               >
                 <Link to={`/product/${product.id}`}>
@@ -106,11 +106,11 @@ const HomeProductList: React.FC = () => {
           🚀 Trending Products
         </motion.h2>
         <div className="overflow-x-auto hide-scrollbar">
-          <div className="flex gap-6 flex-wrap justify-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {trendingProducts.map((product) => (
               <motion.div
                 key={product.id}
-                className="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl max-w-xs w-full"
+                className="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl"
                 whileHover={{ scale: 1.05 }}
               >
                 <Link to={`/product/${product.id}`}>
@@ -139,14 +139,14 @@ const HomeProductList: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            {category}
+           ☀️ Best in {category}
           </motion.h2>
           <div className="overflow-x-auto hide-scrollbar">
-            <div className="flex gap-6 flex-wrap justify-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
               {items.map((product) => (
                 <motion.div
                   key={product.id}
-                  className="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl max-w-xs w-full"
+                  className="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-2xl"
                   whileHover={{ scale: 1.05 }}
                 >
                   <Link to={`/product/${product.id}`}>
