@@ -44,7 +44,7 @@ const TrackOrder: React.FC = () => {
   useEffect(() => {
     const fetchTrackingData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080//api/tracking/123dç`);
+        const response = await fetch(`http://68.183.93.129:8080/api/tracking/123`);
         if (!response.ok) throw new Error('Failed to fetch tracking data');
         const data = await response.json();
         if (data.latitude && data.longitude) {
@@ -54,7 +54,6 @@ const TrackOrder: React.FC = () => {
         console.error('Error fetching tracking data:', error);
       }
     };
-
     fetchTrackingData();
     const interval = setInterval(fetchTrackingData, 5000);
     return () => clearInterval(interval);
