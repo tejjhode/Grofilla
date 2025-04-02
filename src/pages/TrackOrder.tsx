@@ -44,7 +44,7 @@ const TrackOrder: React.FC = () => {
   useEffect(() => {
     const fetchTrackingData = async () => {
       try {
-        const response = await fetch(`http://68.183.93.129:8080/api/tracking/123`);
+        const response = await fetch(`https://tejas.yugal.tech/api/tracking/123`);
         if (!response.ok) throw new Error('Failed to fetch tracking data');
         const data = await response.json();
         if (data.latitude && data.longitude) {

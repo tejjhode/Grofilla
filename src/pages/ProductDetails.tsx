@@ -28,7 +28,7 @@ const ProductDetails: React.FC = () => {
   
     if (product) {
       try {
-        const response = await fetch("http://68.183.93.129:8080/api/cart/add", {
+        const response = await fetch("https://tejas.yugal.tech/api/cart/add", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
