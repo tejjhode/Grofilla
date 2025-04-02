@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://68.183.93.129',
+  baseURL: 'https://tejas.yugal.tech',
   timeout: 10000, 
 });
 
