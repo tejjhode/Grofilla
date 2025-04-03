@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
+import { useNavigate } from "react-router-dom";
 
 const Checkout: React.FC = () => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const [totalAmount, setTotalAmount] = useState(0);
+  const navigate = useNavigate();
+
+  // Fetch user details from localStorage
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
+    name: storedUser.name || "",
+    email: storedUser.email || "",
+    phone: storedUser.phone || "",
+    address: "",
   });
 
   // Calculate total amount from cart
@@ -19,6 +26,13 @@ const Checkout: React.FC = () => {
     );
     setTotalAmount(total);
   }, [cartItems]);
+
+  // Estimate delivery time (2-5 days)
+  const estimatedDelivery = () => {
+    const minMinutes = 10;
+    const maxMinutes = 20;
+    return `${minMinutes}-${maxMinutes} minutes`;
+  };
 
   // Load Razorpay SDK dynamically
   const loadRazorpayScript = () => {
@@ -48,6 +62,7 @@ const Checkout: React.FC = () => {
       image: "/logo.png",
       handler: function (response: any) {
         alert("Payment Successful! Transaction ID: " + response.razorpay_payment_id);
+        navigate("/orders");
       },
       prefill: {
         name: formData.name,
@@ -62,7 +77,7 @@ const Checkout: React.FC = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg">
+    <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg mt-40">
       <h2 className="text-2xl font-bold mb-4">Checkout</h2>
 
       {/* User Information Form */}
@@ -73,9 +88,10 @@ const Checkout: React.FC = () => {
           className="w-full p-2 border rounded"
           placeholder="Enter your name"
           value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          disabled
         />
       </div>
+
       <div className="mb-4">
         <label className="block font-medium">Email</label>
         <input
@@ -83,9 +99,25 @@ const Checkout: React.FC = () => {
           className="w-full p-2 border rounded"
           placeholder="Enter your email"
           value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          disabled
         />
       </div>
+
+     
+
+      {/* Address */}
+      <div className="mb-4">
+        <label className="block font-medium">Delivery Address</label>
+        <input
+          type="text"
+          className="w-full p-2 border rounded"
+          placeholder="Enter your full address"
+          value={formData.address}
+          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+          required
+        />
+      </div>
+
       <div className="mb-4">
         <label className="block font-medium">Phone Number</label>
         <input
@@ -93,8 +125,14 @@ const Checkout: React.FC = () => {
           className="w-full p-2 border rounded"
           placeholder="Enter your phone number"
           value={formData.phone}
-          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+          required
         />
+      </div>
+
+      {/* Estimated Delivery Time */}
+      <div className="mb-4">
+        <p className="text-lg font-semibold">Estimated Delivery Time:</p>
+        <p className="text-green-600">{estimatedDelivery()}</p>
       </div>
 
       {/* Total Amount */}
