@@ -17,6 +17,7 @@ import AddProduct from './pages/AddProduct';
 import EditProduct from './pages/EditProduct';
 import TrackOrder from './pages/TrackOrder';
 import OrderDetails from './pages/OrderDetails';
+import Checkout from './pages/Checkout';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
               <Route path="/add-product" element={<AddProduct />} />
               <Route path="/edit-product/:productId" element={<EditProduct />} /> 
               <Route path="/product/:id" element={<ProductDetails />} />
+              <Route path="/checkout" element={<Checkout />} />
               <Route path="/" element={<OrderHistory />} />
               <Route path="/order-details/:orderId" element={<OrderDetails />} />
               <Route
