@@ -1,117 +1,124 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store";
-import { removeFromCart, updateQuantity } from "../store/slices/cartSlice";
-import { Link } from "react-router-dom";
-import { FaShoppingCart, FaTrashAlt } from "react-icons/fa";
+import {
+  fetchCartItems,
+  removeFromCart,
+  updateCartItem,
+  clearCart,
+} from "../store/slices/cartSlice";
+import { useNavigate } from "react-router-dom";
 
-const CartPage: React.FC = () => {
-  const dispatch = useDispatch();
+const Cart: React.FC = () => {
+  const dispatch = useDispatch<any>();
   const cartItems = useSelector((state: RootState) => state.cart.items);
+  const navigate = useNavigate();
 
-  const handleRemove = (productId: string) => {
-    dispatch(removeFromCart(productId));
-  };
+  // Get user ID from localStorage safely
+  const customerData = localStorage.getItem("user");
+  if (!customerData) return rejectWithValue("Customer data not found. Please log in.");
 
-  const handleQuantityChange = (productId: string, quantity: number) => {
-    if (quantity > 0) {
-      dispatch(updateQuantity({ productId, quantity }));
+  const customer = JSON.parse(customerData);
+  const userId = customer?.id;
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchCartItems(userId));
+    }
+  }, [dispatch, userId]);
+
+  const handleQuantityChange = (cartId: number, quantity: number) => {
+    if (quantity >= 1) {
+      dispatch(updateCartItem({ cartId, quantity }));
     }
   };
 
-  const totalPrice = cartItems.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
+  const handleRemove = (cartId: number) => {
+    dispatch(removeFromCart(cartId));
+  };
+
+  const handleClearCart = () => {
+    if (userId) {
+      dispatch(clearCart(userId));
+    }
+  };
+
+  // ✅ Calculate Total Cart Price
+  const totalCartPrice = cartItems.reduce((total, item) => total + item.totalPrice, 0);
 
   return (
-    <div className="container mx-auto px-4 py-10">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h2 className="text-4xl font-bold text-green-600 flex items-center justify-center gap-2">
-          <FaShoppingCart size={35} /> Your Cart
-        </h2>
-      </div>
+    <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
+      <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
 
       {cartItems.length === 0 ? (
-        <div className="text-center">
-          <p className="text-gray-500 text-lg">Your cart is empty.</p>
-          <Link
-            to="/"
-            className="mt-5 inline-block bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 transition"
-          >
-            Continue Shopping
-          </Link>
-        </div>
+        <p className="text-center text-gray-500">Your cart is empty.</p>
       ) : (
-        <div className="max-w-4xl mx-auto bg-white shadow-xl rounded-lg p-6">
-          <div className="space-y-6">
+        <>
+          <ul>
             {cartItems.map((item) => (
-              <div
-                key={item.productId}
-                className="flex items-center bg-gray-100 p-4 rounded-lg shadow-md"
-              >
-                {/* Product Image */}
-                <img
-                  src={item.product.imageUrl}
-                  alt={item.product.name}
-                  className="w-20 h-20 object-cover rounded-md"
-                />
-                
-                {/* Product Details */}
-                <div className="ml-4 flex-1">
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    {item.product.name}
-                  </h3>
-                  <p className="text-gray-500">₹{item.product.price.toFixed(2)}</p>
+              <li key={item.id} className="flex justify-between items-center border-b py-4">
+                <div className="flex items-center gap-4">
+                  <img
+                    src={item.imageUrl || "https://via.placeholder.com/100"}
+                    alt={`Product ${item.productId}`}
+                    className="w-16 h-16 object-cover rounded"
+                  />
+                  <div>
+                    <p className="font-semibold">Product ID: {item.productId}</p>
+                    <p className="text-gray-600">₹{item.totalPrice} ({item.quantity}x)</p>
+                  </div>
                 </div>
-
-                {/* Quantity Selector */}
                 <div className="flex items-center">
                   <button
-                    onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
-                    className="px-3 py-1 bg-gray-300 text-gray-700 rounded-l-lg hover:bg-gray-400 transition"
+                    onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                    className="px-3 py-1 bg-gray-300 text-black rounded-l"
+                    disabled={item.quantity <= 1}
                   >
                     -
                   </button>
-                  <span className="px-4 py-1 bg-white border text-gray-800">
-                    {item.quantity}
-                  </span>
+                  <span className="px-3">{item.quantity}</span>
                   <button
-                    onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
-                    className="px-3 py-1 bg-gray-300 text-gray-700 rounded-r-lg hover:bg-gray-400 transition"
+                    onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                    className="px-3 py-1 bg-gray-300 text-black rounded-r"
                   >
                     +
                   </button>
+                  <button
+                    onClick={() => handleRemove(item.id)}
+                    className="ml-4 px-3 py-1 bg-red-500 text-white rounded"
+                  >
+                    Remove
+                  </button>
                 </div>
-
-                {/* Remove Button */}
-                <button
-                  onClick={() => handleRemove(item.productId)}
-                  className="ml-6 text-red-500 hover:text-red-700 transition"
-                >
-                  <FaTrashAlt size={20} />
-                </button>
-              </div>
+              </li>
             ))}
+          </ul>
+
+          {/* ✅ Show Total Price */}
+          <div className="mt-6 flex justify-between items-center text-lg font-bold">
+            <span>Total Price:</span>
+            <span className="text-green-600">₹{totalCartPrice}</span>
           </div>
 
-          {/* Total & Checkout */}
-          <div className="mt-8 flex justify-between items-center">
-            <h3 className="text-xl font-bold text-gray-900">
-              Total: ₹{totalPrice.toFixed(2)}
-            </h3>
-            <Link
-              to="/checkout"
-              className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-green-700 transition transform hover:scale-105"
+          <div className="mt-6 text-right">
+            <button
+              onClick={handleClearCart}
+              className="px-4 py-2 bg-red-600 text-white rounded mr-4"
+              disabled={!userId}
+            >
+              Clear Cart
+            </button>
+            <button
+              onClick={() => navigate("/checkout")}
+              className="px-4 py-2 bg-green-600 text-white rounded"
             >
               Proceed to Checkout
-            </Link>
+            </button>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
 };
 
-export default CartPage;
+export default Cart;

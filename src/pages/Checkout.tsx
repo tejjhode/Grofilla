@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store";
 import { useNavigate } from "react-router-dom";
+import { clearCart } from "../store/slices/cartSlice"; 
 
 const Checkout: React.FC = () => {
+  const dispatch = useDispatch();
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const [totalAmount, setTotalAmount] = useState(0);
   const navigate = useNavigate();
@@ -14,24 +16,22 @@ const Checkout: React.FC = () => {
   const [formData, setFormData] = useState({
     name: storedUser.name || "",
     email: storedUser.email || "",
-    phone:  "",
+    phone: "",
     address: "",
   });
 
   // Calculate total amount from cart
   useEffect(() => {
     const total = cartItems.reduce(
-      (sum, item) => sum + item.product.price * item.quantity,
+      (sum, item) => sum + item.totalPrice, // Use totalPrice from backend response
       0
     );
     setTotalAmount(total);
   }, [cartItems]);
 
-  // Estimate delivery time (2-5 days)
+  // Estimate delivery time (10-20 minutes)
   const estimatedDelivery = () => {
-    const minMinutes = 10;
-    const maxMinutes = 20;
-    return `${minMinutes}-${maxMinutes} minutes`;
+    return "10-20 minutes";
   };
 
   // Load Razorpay SDK dynamically
@@ -62,12 +62,12 @@ const Checkout: React.FC = () => {
       image: "/logo.png",
       handler: function (response: any) {
         alert("Payment Successful! Transaction ID: " + response.razorpay_payment_id);
+        dispatch(clearCart()); // ✅ Clear cart after payment
         navigate("/orders");
       },
       prefill: {
         name: formData.name,
-        email: formData.email
-        
+        email: formData.email,
       },
       theme: { color: "#0f9d58" },
     };
@@ -103,8 +103,6 @@ const Checkout: React.FC = () => {
         />
       </div>
 
-     
-
       {/* Address */}
       <div className="mb-4">
         <label className="block font-medium">Delivery Address</label>
@@ -119,16 +117,16 @@ const Checkout: React.FC = () => {
       </div>
 
       <div className="mb-4">
-  <label className="block font-medium">Phone Number</label>
-  <input
-    type="number"
-    className="w-full p-2 border rounded"
-    placeholder="Enter your phone number"
-    value={formData.phone}
-    onChange={(e) => setFormData({ ...formData, phone: e.target.value })} // Allow manual input
-    required
-  />
-</div>
+        <label className="block font-medium">Phone Number</label>
+        <input
+          type="number"
+          className="w-full p-2 border rounded"
+          placeholder="Enter your phone number"
+          value={formData.phone}
+          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+          required
+        />
+      </div>
 
       {/* Estimated Delivery Time */}
       <div className="mb-4">

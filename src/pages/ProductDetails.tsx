@@ -5,6 +5,7 @@ import { ShoppingCart, Star } from 'lucide-react';
 import { fetchProductById } from '../store/slices/productSlice';
 import { addToCart } from '../store/slices/cartSlice';
 import { RootState } from '../store';
+import { image } from 'framer-motion/client';
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,39 +20,49 @@ const ProductDetails: React.FC = () => {
   }, [dispatch, id]);
 
   const handleAddToCart = async () => {
-    if (!user) {
-      alert("You need to log in to add items to your cart.");
+    const customerData = localStorage.getItem("user");
+    if (!customerData) return rejectWithValue("Customer data not found. Please log in.");
+
+    const customer = JSON.parse(customerData);
+    const customerId = customer?.id;
+  
+    if (!customerId ) {
+      alert("Please log in to add items to your cart.");
       return;
     }
   
-    const userId = user.id;
+    const cartItem = {
+      userId: customerId,
+      productId: product.id, 
+      quantity: 1,
+      name: product?.name,
+      imageUrl :product?.imageUrl,
+      totalPrice : product?.price
+    }
   
-    if (product) {
-      try {
-        const response = await fetch("https://tejas.yugal.tech/api/cart/add", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId,
-            productId: product.id,
-            quantity: 1,
-            totalPrice: product.price,
-            imageUrl: product.imageUrl 
-          }),
-        });
-        console.log(response);
+    console.log("Sending cart item:", cartItem);
   
-        if (!response.ok) throw new Error("Failed to add item to cart");
+    try {
+      const response = await fetch("https://tejas.yugal.tech/api/cart/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+          
+        },
+        body: JSON.stringify(cartItem),
+      });
   
-        const data = await response.json();
-        console.log("Added to cart:", data);
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Failed to add item:", errorData);
+        throw new Error(errorData.message || "Failed to add item to cart");
+      }
   
-        // Dispatch action to Redux
-        dispatch(addToCart({ userId, product, quantity: 1 }));
-      } catch (error) {
-       throw error;     }
+      const data = await response.json();
+      console.log("Item added successfully:", data);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Error: " + error);
     }
   };
 
