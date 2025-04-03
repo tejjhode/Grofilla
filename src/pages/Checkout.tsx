@@ -14,7 +14,7 @@ const Checkout: React.FC = () => {
   const [formData, setFormData] = useState({
     name: storedUser.name || "",
     email: storedUser.email || "",
-    phone: storedUser.phone || "",
+    phone:  "",
     address: "",
   });
 
@@ -66,8 +66,8 @@ const Checkout: React.FC = () => {
       },
       prefill: {
         name: formData.name,
-        email: formData.email,
-        contact: formData.phone,
+        email: formData.email
+        
       },
       theme: { color: "#0f9d58" },
     };
@@ -119,15 +119,16 @@ const Checkout: React.FC = () => {
       </div>
 
       <div className="mb-4">
-        <label className="block font-medium">Phone Number</label>
-        <input
-          type="tel"
-          className="w-full p-2 border rounded"
-          placeholder="Enter your phone number"
-          value={formData.phone}
-          required
-        />
-      </div>
+  <label className="block font-medium">Phone Number</label>
+  <input
+    type="number"
+    className="w-full p-2 border rounded"
+    placeholder="Enter your phone number"
+    value={formData.phone}
+    onChange={(e) => setFormData({ ...formData, phone: e.target.value })} // Allow manual input
+    required
+  />
+</div>
 
       {/* Estimated Delivery Time */}
       <div className="mb-4">
