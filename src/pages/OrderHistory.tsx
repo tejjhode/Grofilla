@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCustomerOrders } from '../store/slices/orderSlice';
 import { RootState } from '../store';
 import { useNavigate } from 'react-router-dom';
-import { Clock, CheckCircle, XCircle, Package, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 
-const customerId = '0';
+const customerId = '17';
 
 const statusColorMap: Record<string, string> = {
   PENDING: 'bg-yellow-100 text-yellow-800',
@@ -17,7 +17,7 @@ const statusColorMap: Record<string, string> = {
 const OrderStatusBadge = ({ status }: { status: string }) => {
   return (
     <span
-      className={`text-sm font-medium px-3 py-1 rounded-full ${statusColorMap[status] || 'bg-gray-100 text-gray-700'}`}
+      className={`text-sm font-semibold px-3 py-1 rounded-full shadow-sm ${statusColorMap[status] || 'bg-gray-100 text-gray-700'}`}
     >
       {status}
     </span>
@@ -39,8 +39,16 @@ const OrderHistory: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-green-500"></div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="animate-pulse bg-white rounded-xl shadow-lg h-72">
+            <div className="h-48 bg-gray-200 rounded-t-xl" />
+            <div className="p-4 space-y-2">
+              <div className="h-4 bg-gray-300 rounded w-3/4" />
+              <div className="h-4 bg-gray-300 rounded w-1/2" />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
@@ -56,7 +64,7 @@ const OrderHistory: React.FC = () => {
   if (!Array.isArray(orders) || orders.length === 0) {
     return (
       <div className="text-center mt-12 text-gray-600">
-        <h2 className="text-xl font-semibold">No orders found</h2>
+        <h2 className="text-2xl font-semibold">No orders found</h2>
         <p className="mt-2">Start shopping to see your order history!</p>
       </div>
     );
@@ -65,31 +73,32 @@ const OrderHistory: React.FC = () => {
   const reversedOrders = [...orders].reverse();
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Order History</h1>
+    <div className="container mx-auto px-4 py-10 bg-gray-50 min-h-screen">
+      <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">Your Orders</h1>
 
-      <div className="grid gap-6">
+      <div className="grid gap-8">
         {reversedOrders.map((order) => (
           <div
             key={order.orderId}
             onClick={() => handleOrderClick(order.orderId)}
-            className="bg-white shadow-lg rounded-xl transition-transform hover:scale-[1.01] hover:shadow-xl cursor-pointer"
+            className="bg-white shadow-xl rounded-2xl transition-all hover:scale-[1.01] hover:shadow-2xl cursor-pointer border border-gray-100"
           >
-            {/* Header */}
             <div className="flex justify-between items-start px-6 pt-6">
               <div>
-                <p className="text-sm text-gray-500">Order #{order.orderId}</p>
-                <p className="text-xs text-gray-400">
+                <p className="text-base font-medium text-gray-600">Order #{order.orderId}</p>
+                <p className="text-sm text-gray-400">
                   Placed on: {new Date(order.orderDate).toLocaleDateString()}
                 </p>
               </div>
               <OrderStatusBadge status={order.status} />
             </div>
 
-            {/* Items */}
-            <div className="px-6 py-4 space-y-3">
+            <div className="px-6 py-4 divide-y divide-gray-200">
               {order.items?.map((item: any) => (
-                <div key={item.id} className="flex justify-between items-center border-b pb-3 last:border-none last:pb-0">
+                <div
+                  key={item.id}
+                  className="flex justify-between items-center py-3"
+                >
                   <div className="flex items-center space-x-4">
                     <img
                       src={item.imageUrl}
@@ -97,17 +106,16 @@ const OrderHistory: React.FC = () => {
                       className="h-16 w-16 object-cover rounded-md border"
                     />
                     <div className="max-w-xs">
-                      <p className="font-semibold text-sm truncate">{item.name}</p>
-                      <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                      <p className="font-semibold text-base text-gray-800 truncate">{item.name}</p>
+                      <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                     </div>
                   </div>
-                  <p className="text-sm font-medium text-green-700">₹{item.totalPrice.toFixed(2)}</p>
+                  <p className="text-base font-semibold text-green-700">₹{item.totalPrice.toFixed(2)}</p>
                 </div>
               ))}
             </div>
 
-            {/* Footer */}
-            <div className="px-6 py-4 border-t bg-gray-50 flex justify-between items-center rounded-b-xl">
+            <div className="px-6 py-4 border-t bg-gray-100 flex justify-between items-center rounded-b-2xl">
               {order.status === 'ACCEPTED' ? (
                 <button
                   className="text-sm text-blue-600 flex items-center hover:underline"
