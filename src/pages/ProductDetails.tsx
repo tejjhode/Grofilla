@@ -3,9 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ShoppingCart, Star } from 'lucide-react';
 import { fetchProductById } from '../store/slices/productSlice';
-import { addToCart } from '../store/slices/cartSlice';
 import { RootState } from '../store';
-import { image } from 'framer-motion/client';
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,7 +38,6 @@ const ProductDetails: React.FC = () => {
       totalPrice : product?.price
     }
   
-    console.log("Sending cart item:", cartItem);
   
     try {
       const response = await fetch("https://tejas.yugal.tech/api/cart/add", {

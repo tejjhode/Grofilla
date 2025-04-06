@@ -11,14 +11,12 @@ import { useNavigate } from "react-router-dom";
 
 const Cart: React.FC = () => {
   const dispatch = useDispatch<any>();
-  const cartItems = useSelector((state: RootState) => state.cart.items);
   const navigate = useNavigate();
+  const cartItems = useSelector((state: RootState) => state.cart.items);
 
-  // Get user ID from localStorage safely
+  // ✅ Safely get user ID from localStorage
   const customerData = localStorage.getItem("user");
-  if (!customerData) return rejectWithValue("Customer data not found. Please log in.");
-
-  const customer = JSON.parse(customerData);
+  const customer = customerData ? JSON.parse(customerData) : null;
   const userId = customer?.id;
 
   useEffect(() => {
@@ -36,6 +34,7 @@ const Cart: React.FC = () => {
   const handleRemove = (cartId: number) => {
     dispatch(removeFromCart(cartId));
   };
+  console.log("cartItems:", cartItems);
 
   const handleClearCart = () => {
     if (userId) {
@@ -63,10 +62,10 @@ const Cart: React.FC = () => {
                     alt={`Product ${item.productId}`}
                     className="w-16 h-16 object-cover rounded"
                   />
-                  <div>
-                    <p className="font-semibold">Product ID: {item.productId}</p>
-                    <p className="text-gray-600">₹{item.totalPrice} ({item.quantity}x)</p>
-                  </div>
+                   <div>
+      <p className="font-semibold">{item.name}</p>
+      <p className="text-gray-600">₹{item.totalPrice} ({item.quantity}x)</p>
+    </div>
                 </div>
                 <div className="flex items-center">
                   <button
@@ -94,10 +93,9 @@ const Cart: React.FC = () => {
             ))}
           </ul>
 
-          {/* ✅ Show Total Price */}
           <div className="mt-6 flex justify-between items-center text-lg font-bold">
             <span>Total Price:</span>
-            <span className="text-green-600">₹{totalCartPrice}</span>
+            <span className="text-green-600">₹{totalCartPrice.toFixed(2)}</span>
           </div>
 
           <div className="mt-6 text-right">
