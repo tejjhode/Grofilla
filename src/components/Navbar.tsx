@@ -12,6 +12,7 @@ import {
   ShoppingBasket,
   Info,
   Search
+  
 } from "lucide-react";
 import { RootState } from "../store";
 import { logout } from "../store/slices/authSlice";
