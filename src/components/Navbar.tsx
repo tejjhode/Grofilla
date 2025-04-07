@@ -56,13 +56,12 @@ const Navbar: React.FC = () => {
             </div>
             <span className="font-poppins tracking-tight">Grofilla</span>
           </Link>
-
-          {/* Search */}
-          <div className="relative w-1/3 hidden md:block">
+                {/* Search */}
+                <div className="relative w-1/3 ">
   <Search className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
   <input
     type="text"
-    placeholder="Search groceries..."
+    placeholder="Search Products..."
     value={searchTerm}
     onChange={handleSearch}
     className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-full focus:ring-2 focus:ring-green-500 focus:outline-none transition"
@@ -88,6 +87,8 @@ const Navbar: React.FC = () => {
     </div>
   )}
 </div>
+
+    
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-6 text-sm font-medium">
