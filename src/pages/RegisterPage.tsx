@@ -119,7 +119,7 @@ const RegisterPage: React.FC = () => {
               />
             </div>
 
-            <div>
+            {/* <div>
               <label htmlFor="role" className="block text-sm font-medium text-gray-700">
                 Account Type
               </label>
@@ -133,7 +133,7 @@ const RegisterPage: React.FC = () => {
                 <option value="CUSTOMER">Customer</option>
                 <option value="SHOPKEEPER">Shopkeeper</option>
               </select>
-            </div>
+            </div> */}
 
             {/* Extra fields for Customers */}
             {formData.role === 'CUSTOMER' && (

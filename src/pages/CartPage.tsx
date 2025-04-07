@@ -37,6 +37,7 @@ const Cart: React.FC = () => {
 
   const handleClearCart = () => {
     if (userId) {
+      console.log(userId)
       dispatch(clearCart(userId));
     }
   };
@@ -56,7 +57,7 @@ const Cart: React.FC = () => {
         <div className="text-center text-gray-500 mt-20">
           <p className="text-2xl mb-4">🛒 Your cart is empty</p>
           <button
-            onClick={() => navigate("/shop")}
+            onClick={() => navigate("/products")}
             className="bg-green-600 text-white px-6 py-3 rounded-full hover:bg-green-700 transition"
           >
             Continue Shopping

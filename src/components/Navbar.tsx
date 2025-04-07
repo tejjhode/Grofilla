@@ -11,7 +11,9 @@ import {
   ClipboardList,
   ShoppingBasket,
   Info,
-  Search
+  Search,
+  UserPlus,
+  LogIn
   
 } from "lucide-react";
 import { RootState } from "../store";
@@ -152,12 +154,12 @@ const Navbar: React.FC = () => {
               </>
             ) : (
               <>
-                <Link to="/login" className="text-gray-700 hover:text-green-600">Login</Link>
+                <Link to="/login" className="flex items-center gap-2 text-gray-700 hover:text-green-600"><LogIn />Login</Link>
                 <Link
                   to="/register"
-                  className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700"
+                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700"
                 >
-                  Register
+                 <UserPlus /> Register
                 </Link>
               </>
             )}
@@ -209,9 +211,12 @@ const Navbar: React.FC = () => {
               </>
             ) : (
               <>
-                <Link to="/login" className="block text-gray-700 hover:text-green-600">Login</Link>
-                <Link to="/register" className="block bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700">
-                  Register
+                <Link to="/login" className="flex items-center gap-2 text-gray-700 hover:text-green-600"><LogIn />Login</Link>
+                <Link
+                  to="/register"
+                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700"
+                >
+                 <UserPlus /> Register
                 </Link>
               </>
             )}
