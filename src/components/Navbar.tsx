@@ -149,17 +149,17 @@ const Navbar: React.FC = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 space-y-4">
             <Link to="/about" className="block text-gray-700 hover:text-green-600">About Us</Link>
-            {/* <div className="flex items-center gap-1 text-gray-700">
+            <div className="flex items-center gap-1 text-gray-700">
               <MapPin className="w-5 h-5 text-green-500" />
               <span>Gwalior</span>
-            </div> */}
+            </div>
             {user ? (
               <>
                 {user.role === "CUSTOMER" && (
                   <>
-                    {/* <Link to="/cart" className="flex items-center gap-2 text-gray-700 hover:text-green-600">
+                    <Link to="/cart" className="flex items-center gap-2 text-gray-700 hover:text-green-600">
                       <ShoppingCart className="h-5 w-5" /> Cart
-                    </Link> */}
+                    </Link>
                     <Link to="/orders" className="block text-gray-700 hover:text-green-600">Orders</Link>
                   </>
                 )}
