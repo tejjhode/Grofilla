@@ -35,7 +35,7 @@ api.interceptors.response.use(
         alert('Server error! Please try again later.');
       }
     } else if (error.request) {
-      alert('Network error! Please check your internet connection.');
+      alert('Site is Under Maintaince ! Please return after a while');
     }
 
     return Promise.reject(error);
