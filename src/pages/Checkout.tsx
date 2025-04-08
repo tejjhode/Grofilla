@@ -8,7 +8,6 @@ import axios from "axios";
 const Checkout: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const productState = useSelector((state: RootState) => state.products);
   const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -118,87 +117,116 @@ const Checkout: React.FC = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg mt-40">
-      <h2 className="text-2xl font-bold mb-4">Checkout</h2>
+    <div className="max-w-6xl mx-auto mt-24 p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+      {/* Address Section */}
+      <div className="md:col-span-2 bg-white shadow-lg rounded-xl p-6 space-y-6">
+        <h2 className="text-2xl font-semibold text-gray-800 border-b pb-2">Delivery Address</h2>
 
-      <div className="mb-4">
-        <label className="block font-medium">Full Name</label>
-        <input type="text" className="w-full p-2 border rounded" value={formData.name} disabled />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div>
+    <label className="block font-medium text-sm mb-1">Full Name</label>
+    <input
+      type="text"
+      className="w-full p-2 border rounded bg-gray-100"
+      value={formData.name}
+      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+    />
+  </div>
+
+  <div>
+    <label className="block font-medium text-sm mb-1">Email</label>
+    <input
+      type="email"
+      className="w-full p-2 border rounded bg-gray-100"
+      value={formData.email}
+      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+    />
+  </div>
+</div>
+
+        <div>
+          <label className="block font-medium text-sm mb-1">Phone Number</label>
+          <input
+            type="tel"
+            className="w-full p-2 border rounded"
+            placeholder="Enter your phone number"
+            value={formData.phone}
+            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+          />
+        </div>
+
+        <div>
+          <label className="block font-medium text-sm mb-1">Address</label>
+          <textarea
+            className="w-full p-2 border rounded"
+            rows={3}
+            placeholder="Enter your full delivery address"
+            value={formData.address}
+            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+          />
+        </div>
+
+        <div className="text-sm text-gray-500">
+          Estimated Delivery Time: <span className="text-green-600 font-medium">{estimatedDelivery()}</span>
+        </div>
       </div>
 
-      <div className="mb-4">
-        <label className="block font-medium">Email</label>
-        <input type="email" className="w-full p-2 border rounded" value={formData.email} disabled />
-      </div>
+      {/* Summary Section */}
+      <div className="bg-white shadow-lg rounded-xl p-6 space-y-4">
+        <h3 className="text-xl font-semibold border-b pb-2">Order Summary</h3>
 
-      <div className="mb-4">
-        <label className="block font-medium">Delivery Address</label>
-        <input
-          type="text"
-          className="w-full p-2 border rounded"
-          placeholder="Enter your full address"
-          value={formData.address}
-          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-          required
-        />
-      </div>
+        <ul className="divide-y">
+          {cartItems.map((item) => (
+            <li key={item.productId} className="py-2 text-sm">
+              <div className="flex justify-between">
+                <span>{item.name} x {item.quantity}</span>
+                <span className="font-medium">₹{item.totalPrice.toFixed(2)}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
 
-      <div className="mb-4">
-        <label className="block font-medium">Phone Number</label>
-        <input
-          type="tel"
-          className="w-full p-2 border rounded"
-          placeholder="Enter your phone number"
-          value={formData.phone}
-          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-          required
-        />
-      </div>
+        <div className="border-t pt-2 flex justify-between text-lg font-semibold">
+          <span>Total</span>
+          <span>₹{totalAmount.toFixed(2)}</span>
+        </div>
 
-      <div className="mb-4">
-        <p className="text-lg font-semibold">Estimated Delivery Time:</p>
-        <p className="text-green-600">{estimatedDelivery()}</p>
+        <button
+          onClick={handlePayment}
+          disabled={loading}
+          className={`w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition duration-300 ${
+            loading ? "opacity-70 cursor-not-allowed" : ""
+          }`}
+        >
+          {loading ? (
+            <>
+              <svg
+                className="w-5 h-5 animate-spin text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+              </svg>
+              Processing...
+            </>
+          ) : (
+            " Place Order"
+          )}
+        </button>
       </div>
-
-      <div className="text-lg font-semibold mb-4">
-        Total Amount: ₹{totalAmount.toFixed(2)}
-      </div>
-
-      <button
-        onClick={handlePayment}
-        disabled={loading}
-        className={`w-full flex justify-center items-center gap-2 bg-green-600 text-white py-2 rounded transition-all duration-300 ${
-          loading ? "opacity-70 cursor-not-allowed" : "hover:bg-green-700"
-        }`}
-      >
-        {loading ? (
-          <>
-            <svg
-              className="animate-spin h-5 w-5 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v8H4z"
-              ></path>
-            </svg>
-            Processing...
-          </>
-        ) : (
-          "Place Order & Pay"
-        )}
-      </button>
     </div>
   );
 };
