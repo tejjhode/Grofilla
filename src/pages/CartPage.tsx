@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store";
 import {
@@ -9,11 +9,13 @@ import {
 } from "../store/slices/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const Cart: React.FC = () => {
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
   const cartItems = useSelector((state: RootState) => state.cart.items);
+  const [isPaying, setIsPaying] = useState(false);
 
   const customerData = localStorage.getItem("user");
   const customer = customerData ? JSON.parse(customerData) : null;
@@ -37,12 +39,30 @@ const Cart: React.FC = () => {
 
   const handleClearCart = () => {
     if (userId) {
-      console.log(userId)
       dispatch(clearCart(userId));
     }
   };
 
-  const subtotal = cartItems.reduce((total, item) => total + item.totalPrice, 0);
+  const handleProceedToPay = () => {
+    setIsPaying(true);
+    setTimeout(() => {
+      navigate("/checkout");
+    }, 2000); // simulate payment processing
+  };
+
+  const mergedCartItems = Object.values(
+    cartItems.reduce((acc, item) => {
+      if (!acc[item.productId]) {
+        acc[item.productId] = { ...item };
+      } else {
+        acc[item.productId].quantity += item.quantity;
+        acc[item.productId].totalPrice += item.totalPrice;
+      }
+      return acc;
+    }, {} as Record<number, typeof cartItems[0]>)
+  );
+
+  const subtotal = mergedCartItems.reduce((total, item) => total + item.totalPrice, 0);
   const shippingCharge = subtotal > 0 && subtotal < 500 ? 50 : 0;
   const grandTotal = subtotal + shippingCharge;
   const remainingForFreeShipping = subtotal < 500 ? 500 - subtotal : 0;
@@ -53,7 +73,7 @@ const Cart: React.FC = () => {
         <FaShoppingCart className="text-green-500" /> Shopping Cart
       </h1>
 
-      {cartItems.length === 0 ? (
+      {mergedCartItems.length === 0 ? (
         <div className="text-center text-gray-500 mt-20">
           <p className="text-2xl mb-4">🛒 Your cart is empty</p>
           <button
@@ -67,12 +87,16 @@ const Cart: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Left: Cart Items */}
           <div className="lg:col-span-2 space-y-6">
-            {cartItems.map((item) => (
+            {mergedCartItems.map((item) => (
               <div
-                key={item.id}
+                key={item.productId}
                 className="flex flex-col sm:flex-row items-center justify-between bg-white p-5 rounded-xl shadow-md transition hover:shadow-lg"
               >
-                <div className="flex items-center gap-4 w-full sm:w-auto">
+                {/* Clickable Part */}
+                <div
+                  className="flex items-center gap-4 w-full sm:w-auto cursor-pointer"
+                  onClick={() => navigate(`/product/${item.productId}`)}
+                >
                   <img
                     src={item.imageUrl || "https://via.placeholder.com/100"}
                     alt={`Product ${item.productId}`}
@@ -86,6 +110,7 @@ const Cart: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Controls */}
                 <div className="flex items-center mt-4 sm:mt-0 gap-4">
                   <button
                     className="w-8 h-8 bg-gray-200 rounded-full font-bold hover:bg-gray-300 transition"
@@ -158,12 +183,33 @@ const Cart: React.FC = () => {
               >
                 Clear Cart
               </button>
-              <button
-                onClick={() => navigate("/checkout")}
-                className="w-full py-3 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition"
+
+              {/* Animated Proceed to Checkout */}
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                onClick={handleProceedToPay}
+                disabled={isPaying}
+                className={`w-full py-3 rounded-full font-semibold flex justify-center items-center gap-3 transition ${
+                  isPaying
+                    ? "bg-green-400 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700"
+                } text-white`}
               >
-                Proceed to Checkout
-              </button>
+                {isPaying ? (
+                  <>
+                    <motion.div
+                      className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                    />
+                    Processing...
+                  </>
+                ) : (
+                  "Proceed to Checkout"
+                )}
+              </motion.button>
             </div>
           </div>
         </div>

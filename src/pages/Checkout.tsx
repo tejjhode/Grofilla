@@ -14,6 +14,7 @@ const Checkout: React.FC = () => {
   const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   const [totalAmount, setTotalAmount] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: storedUser.name || "",
     email: storedUser.email || "",
@@ -50,11 +51,10 @@ const Checkout: React.FC = () => {
         shopkeeper_id: shopkeeperId,
         orderDate: new Date().toISOString(),
         totalAmount,
-        cartItems, // Send product info too (optional)
+        cartItems,
         address: formData.address,
         phone: formData.phone,
       };
-      console.log(storedUser.id)
 
       const response = await axios.post(
         `https://tejas.yugal.tech/orders/place/${storedUser.id}/16`,
@@ -63,6 +63,7 @@ const Checkout: React.FC = () => {
 
       if (response.status === 200 || response.status === 201) {
         await axios.delete(`https://tejas.yugal.tech/api/cart/user/16/clear`);
+        dispatch(clearCart());
         navigate("/orders");
       } else {
         alert("Failed to place order. Please try again.");
@@ -70,6 +71,8 @@ const Checkout: React.FC = () => {
     } catch (error) {
       console.error("Order placement error:", error);
       alert("Something went wrong while placing your order.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,14 +82,17 @@ const Checkout: React.FC = () => {
       return;
     }
 
+    setLoading(true);
+
     const res = await loadRazorpayScript();
     if (!res) {
       alert("Razorpay SDK failed to load.");
+      setLoading(false);
       return;
     }
 
     const options = {
-      key: "rzp_test_8bR510NJGDF5tL", // Replace with your live key in production
+      key: "rzp_test_8bR510NJGDF5tL",
       amount: totalAmount * 100,
       currency: "INR",
       name: "Grofila Grocery",
@@ -102,6 +108,9 @@ const Checkout: React.FC = () => {
         contact: formData.phone,
       },
       theme: { color: "#0f9d58" },
+      modal: {
+        ondismiss: () => setLoading(false),
+      },
     };
 
     const razorpay = new (window as any).Razorpay(options);
@@ -157,9 +166,38 @@ const Checkout: React.FC = () => {
 
       <button
         onClick={handlePayment}
-        className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
+        disabled={loading}
+        className={`w-full flex justify-center items-center gap-2 bg-green-600 text-white py-2 rounded transition-all duration-300 ${
+          loading ? "opacity-70 cursor-not-allowed" : "hover:bg-green-700"
+        }`}
       >
-        Pay Now
+        {loading ? (
+          <>
+            <svg
+              className="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8H4z"
+              ></path>
+            </svg>
+            Processing...
+          </>
+        ) : (
+          "Place Order & Pay"
+        )}
       </button>
     </div>
   );
