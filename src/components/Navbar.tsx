@@ -56,7 +56,7 @@ const Navbar: React.FC = () => {
             <div className="bg-green-600 text-white rounded-full p-2 w-10 h-10 flex items-center justify-center shadow">
               G
             </div>
-            <span className="font-poppins tracking-tight">Grofilla</span>
+            <span className="font-poppins tracking-tight">Grofila</span>
           </Link>
                 {/* Search */}
                 <div className="relative w-1/3 ">
