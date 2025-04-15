@@ -10,12 +10,16 @@ import {
 import { useNavigate } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { promoCodes, PromoCode } from "../coupons/promotion_codes";
 
 const Cart: React.FC = () => {
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const [isPaying, setIsPaying] = useState(false);
+  const [promoCodeInput, setPromoCodeInput] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(null);
+  const [promoMessage, setPromoMessage] = useState("");
 
   const customerData = localStorage.getItem("user");
   const customer = customerData ? JSON.parse(customerData) : null;
@@ -40,6 +44,8 @@ const Cart: React.FC = () => {
   const handleClearCart = () => {
     if (userId) {
       dispatch(clearCart(userId));
+      setAppliedPromo(null);
+      setPromoMessage("");
     }
   };
 
@@ -47,7 +53,7 @@ const Cart: React.FC = () => {
     setIsPaying(true);
     setTimeout(() => {
       navigate("/checkout");
-    }, 2000); // simulate payment processing
+    }, 2000);
   };
 
   const mergedCartItems = Object.values(
@@ -64,13 +70,51 @@ const Cart: React.FC = () => {
 
   const subtotal = mergedCartItems.reduce((total, item) => total + item.totalPrice, 0);
   const shippingCharge = subtotal > 0 && subtotal < 500 ? 50 : 0;
-  const grandTotal = subtotal + shippingCharge;
+
+  // Apply Promo Code Logic
+  let discount = 0;
+  if (appliedPromo && subtotal >= appliedPromo.minOrderValue) {
+    if (appliedPromo.type === "flat") {
+      discount = appliedPromo.value;
+    } else {
+      discount = (appliedPromo.value / 100) * subtotal;
+      if (appliedPromo.maxDiscount && discount > appliedPromo.maxDiscount) {
+        discount = appliedPromo.maxDiscount;
+      }
+    }
+  }
+
+  const grandTotal = subtotal - discount + shippingCharge;
   const remainingForFreeShipping = subtotal < 500 ? 500 - subtotal : 0;
 
+  const handleApplyPromo = () => {
+    const found = promoCodes.find(p => p.code === promoCodeInput.toUpperCase());
+    if (!found) {
+      setPromoMessage("❌ Invalid promo code.");
+      return;
+    }
+    if (subtotal < found.minOrderValue) {
+      setPromoMessage(`❌ Minimum order ₹${found.minOrderValue} required for this promo.`);
+      return;
+    }
+    setAppliedPromo(found);
+    setPromoMessage(`✅ Promo ${found.code} applied!`);
+  };
+
+  const handleRemovePromo = () => {
+    setAppliedPromo(null);
+    setPromoCodeInput("");
+    setPromoMessage("Promo code removed.");
+  };
+
+  const suggestedPromos = promoCodes
+    .filter(p => subtotal >= p.minOrderValue && p.code !== appliedPromo?.code)
+    .slice(0, 3);
+
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-10 flex items-center justify-center gap-3">
-        <FaShoppingCart className="text-green-500" /> Shopping Cart
+    <div className="max-w-7xl mx-auto px-4 py-10">
+      <h1 className="text-4xl font-bold text-center text-gray-800 mb-12 flex items-center justify-center gap-3">
+        <FaShoppingCart className="text-green-600" /> Shopping Cart
       </h1>
 
       {mergedCartItems.length === 0 ? (
@@ -88,11 +132,12 @@ const Cart: React.FC = () => {
           {/* Left: Cart Items */}
           <div className="lg:col-span-2 space-y-6">
             {mergedCartItems.map((item) => (
-              <div
+              <motion.div
                 key={item.productId}
-                className="flex flex-col sm:flex-row items-center justify-between bg-white p-5 rounded-xl shadow-md transition hover:shadow-lg"
+                className="flex flex-col sm:flex-row items-center justify-between bg-white p-5 rounded-xl shadow-xl hover:shadow-2xl transition-all"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                {/* Clickable Part */}
                 <div
                   className="flex items-center gap-4 w-full sm:w-auto cursor-pointer"
                   onClick={() => navigate(`/product/${item.productId}`)}
@@ -100,17 +145,16 @@ const Cart: React.FC = () => {
                   <img
                     src={item.imageUrl || "https://via.placeholder.com/100"}
                     alt={`Product ${item.productId}`}
-                    className="w-24 h-24 object-cover rounded-lg"
+                    className="w-24 h-24 object-cover rounded-lg transition-all hover:scale-105"
                   />
                   <div>
-                    <h2 className="text-lg font-semibold">{item.name}</h2>
-                    <p className="text-gray-500">
+                    <h2 className="text-lg font-semibold text-gray-800">{item.name}</h2>
+                    <p className="text-gray-600">
                       ₹{item.totalPrice} ({item.quantity}x)
                     </p>
                   </div>
                 </div>
 
-                {/* Controls */}
                 <div className="flex items-center mt-4 sm:mt-0 gap-4">
                   <button
                     className="w-8 h-8 bg-gray-200 rounded-full font-bold hover:bg-gray-300 transition"
@@ -133,12 +177,12 @@ const Cart: React.FC = () => {
                     Remove
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
 
           {/* Right: Summary */}
-          <div className="bg-white p-6 rounded-xl shadow-lg space-y-6">
+          <div className="bg-white p-6 rounded-xl shadow-xl space-y-6">
             <h3 className="text-2xl font-bold text-gray-800 border-b pb-4">Order Summary</h3>
 
             <div className="space-y-2 text-gray-700 text-lg">
@@ -146,6 +190,12 @@ const Cart: React.FC = () => {
                 <span>Subtotal:</span>
                 <span>₹{subtotal.toFixed(2)}</span>
               </div>
+              {appliedPromo && (
+                <div className="flex justify-between text-green-600 font-medium">
+                  <span>Discount ({appliedPromo.code}):</span>
+                  <span>− ₹{discount.toFixed(2)}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span>Shipping:</span>
                 <span className={shippingCharge ? "text-red-500" : "text-green-600"}>
@@ -159,7 +209,6 @@ const Cart: React.FC = () => {
               </div>
             </div>
 
-            {/* Free shipping progress */}
             {remainingForFreeShipping > 0 && (
               <div className="text-sm text-gray-600">
                 <p>
@@ -175,42 +224,78 @@ const Cart: React.FC = () => {
               </div>
             )}
 
-            <div className="flex flex-col gap-4 pt-4">
-              <button
-                onClick={handleClearCart}
-                disabled={!userId}
-                className="w-full py-3 bg-red-500 text-white rounded-full font-semibold hover:bg-red-600 transition"
-              >
-                Clear Cart
-              </button>
-
-              {/* Animated Proceed to Checkout */}
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                onClick={handleProceedToPay}
-                disabled={isPaying}
-                className={`w-full py-3 rounded-full font-semibold flex justify-center items-center gap-3 transition ${
-                  isPaying
-                    ? "bg-green-400 cursor-not-allowed"
-                    : "bg-green-600 hover:bg-green-700"
-                } text-white`}
-              >
-                {isPaying ? (
-                  <>
-                    <motion.div
-                      className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
-                      animate={{ rotate: 360 }}
-                      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                    />
-                    Processing...
-                  </>
-                ) : (
-                  "Proceed to Checkout"
-                )}
-              </motion.button>
+            {/* Promo Code UI */}
+            <div className="pt-4 space-y-2">
+              <div className="flex gap-2">
+                <input
+                  value={promoCodeInput}
+                  onChange={(e) => setPromoCodeInput(e.target.value)}
+                  type="text"
+                  placeholder="Enter Promo Code"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none"
+                />
+                <button
+                  onClick={handleApplyPromo}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+                >
+                  Apply
+                </button>
+              </div>
+              {promoMessage && (
+                <div className={`text-sm ${promoMessage.startsWith("❌") ? "text-red-600" : "text-green-600"}`}>
+                  {promoMessage}
+                </div>
+              )}
+              {appliedPromo && (
+                <div className="text-sm">
+                  <span className="font-semibold">Applied Promo: {appliedPromo.code}</span>
+                  <button
+                    onClick={handleRemovePromo}
+                    className="text-red-500 ml-2 hover:text-red-700"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
             </div>
+
+            {/* Suggested Promo Codes */}
+<div className="pt-6 space-y-2 text-sm text-gray-700">
+  {suggestedPromos.length > 0 && (
+    <div>
+      <h4 className="font-semibold">Top Discounted Promo Codes</h4>
+      {suggestedPromos
+        .sort((a, b) => (b.value - a.value)) // Sorting by discount value (descending)
+        .map((promo) => (
+          <motion.div
+            key={promo.code}
+            className="flex justify-between items-center bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-all"
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="flex flex-col">
+              <span className="font-semibold">{promo.code}</span>
+              <span className="text-sm text-gray-600">{promo.description}</span>
+            </div>
+            <button
+              onClick={() => setPromoCodeInput(promo.code)}
+              className="text-blue-600 hover:text-blue-700 font-medium"
+            >
+              Apply
+            </button>
+          </motion.div>
+        ))}
+    </div>
+  )}
+</div>
+
+            {/* Proceed to Pay Button */}
+            <button
+              onClick={handleProceedToPay}
+              disabled={isPaying}
+              className="w-full bg-green-600 text-white py-3 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-green-700 transition"
+            >
+              {isPaying ? "Processing..." : "Proceed to Payment"}
+            </button>
           </div>
         </div>
       )}

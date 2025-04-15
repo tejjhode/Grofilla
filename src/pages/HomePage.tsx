@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Truck, Star, Shield, BadgePercent, Package, CheckCircle } from 'lucide-react';
 import HomeProductList from './HomeProductList';
+import Footer from './Footer';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -143,7 +144,7 @@ const HomePage: React.FC = () => {
       </div>
 
       {/* Features Section */}
-      <div className="py-16 bg-gray-50">
+      {/* <div className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">Why Choose Grofila?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -156,10 +157,10 @@ const HomePage: React.FC = () => {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* CTA Section */}
-      <div className="bg-green-600 py-16">
+      {/* <div className="bg-green-600 py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-6">Ready to Start Shopping?</h2>
           <p className="text-white text-xl mb-8">
@@ -172,9 +173,12 @@ const HomePage: React.FC = () => {
             Create an Account
           </button>
         </div>
-      </div>
+      </div> */}
+      < Footer / >
     </div>
+   
   );
+  
 };
 
 export default HomePage;
