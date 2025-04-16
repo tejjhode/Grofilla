@@ -112,7 +112,7 @@ const Cart: React.FC = () => {
     .slice(0, 3);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
+    <div className="max-w-7xl mx-auto px-4 py-10 mt-5">
       <h1 className="text-4xl font-bold text-center text-gray-800 mb-12 flex items-center justify-center gap-3">
         <FaShoppingCart className="text-green-600" /> Shopping Cart
       </h1>

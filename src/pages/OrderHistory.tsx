@@ -39,7 +39,7 @@ const OrderHistory: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4 sm:p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4 sm:p-6 ">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="animate-pulse bg-white rounded-xl shadow-lg h-72">
             <div className="h-48 bg-gray-200 rounded-t-xl" />
@@ -73,8 +73,8 @@ const OrderHistory: React.FC = () => {
   const reversedOrders = [...orders].reverse();
 
   return (
-    <div className="container mx-auto px-2 sm:px-4 py-10 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl sm:text-4xl font-bold mb-8 text-center text-gray-800">Your Orders</h1>
+    <div className="container mx-auto px-2 sm:px-4 py-10 bg-gray-50 min-h-screen mt-5">
+      <h1 className="text-2xl sm:text-4xl font-bold mb-8 text-center text-gray-800">My Orders</h1>
 
       <div className="flex flex-col gap-6">
         {reversedOrders.map((order) => (

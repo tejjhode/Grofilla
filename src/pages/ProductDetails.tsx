@@ -100,7 +100,7 @@ const ProductDetails: React.FC = () => {
   const isDairyFruitOrFood = ['dairy', 'fruits', 'food'].includes(product.category.toLowerCase());
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 mt-6">
       {/* Product Card */}
       <div className="rounded-xl shadow-xl flex flex-col md:flex-row bg-white mb-10 gap-4">
         {/* Image */}
