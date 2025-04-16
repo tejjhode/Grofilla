@@ -69,7 +69,7 @@ const Cart: React.FC = () => {
   );
 
   const subtotal = mergedCartItems.reduce((total, item) => total + item.totalPrice, 0);
-  const shippingCharge = subtotal > 0 && subtotal < 500 ? 50 : 0;
+  const shippingCharge = subtotal > 0 && subtotal < 299 ? 50 : 0;
 
   // Apply Promo Code Logic
   let discount = 0;
@@ -85,7 +85,7 @@ const Cart: React.FC = () => {
   }
 
   const grandTotal = subtotal - discount + shippingCharge;
-  const remainingForFreeShipping = subtotal < 500 ? 500 - subtotal : 0;
+  const remainingForFreeShipping = subtotal < 299 ? 299 - subtotal : 0;
 
   const handleApplyPromo = () => {
     const found = promoCodes.find(p => p.code === promoCodeInput.toUpperCase());

@@ -68,16 +68,16 @@ const Footer = () => {
 
           {/* Social Icons */}
           <div className="flex space-x-4 text-xl text-green-500">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-green-800 transition">
+            <a href="https://www.facebook.com/tejswa.jhode" target="_blank" rel="noopener noreferrer" className="hover:text-green-800 transition">
               <FaFacebook />
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-600 transition">
+            <a href="https://x.com/jhode27770" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-600 transition">
               <FaTwitter />
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-600 transition">
+            <a href="https://www.instagram.com/tejaswa_jhode" target="_blank" rel="noopener noreferrer" className="hover:text-pink-600 transition">
               <FaInstagram />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-green-900 transition">
+            <a href="https://www.linkedin.com/in/tejaswa-jhode-669362163/" target="_blank" rel="noopener noreferrer" className="hover:text-green-900 transition">
               <FaLinkedin />
             </a>
           </div>

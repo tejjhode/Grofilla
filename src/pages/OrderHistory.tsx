@@ -17,7 +17,7 @@ const statusColorMap: Record<string, string> = {
 const OrderStatusBadge = ({ status }: { status: string }) => {
   return (
     <span
-      className={`text-sm font-semibold px-3 py-1 rounded-full shadow-sm ${statusColorMap[status] || 'bg-gray-100 text-gray-700'}`}
+      className={`text-xs sm:text-sm font-semibold px-3 py-1 rounded-full shadow-sm ${statusColorMap[status] || 'bg-gray-100 text-gray-700'}`}
     >
       {status}
     </span>
@@ -39,7 +39,7 @@ const OrderHistory: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4 sm:p-6">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="animate-pulse bg-white rounded-xl shadow-lg h-72">
             <div className="h-48 bg-gray-200 rounded-t-xl" />
@@ -55,7 +55,7 @@ const OrderHistory: React.FC = () => {
 
   if (error) {
     return (
-      <div className="text-center text-red-600 mt-10">
+      <div className="text-center text-red-600 mt-10 px-4">
         Error: {error || 'Unable to fetch orders. Try again later.'}
       </div>
     );
@@ -63,9 +63,9 @@ const OrderHistory: React.FC = () => {
 
   if (!Array.isArray(orders) || orders.length === 0) {
     return (
-      <div className="text-center mt-12 text-gray-600">
-        <h2 className="text-2xl font-semibold">No orders found</h2>
-        <p className="mt-2">Start shopping to see your order history!</p>
+      <div className="text-center mt-12 text-gray-600 px-4">
+        <h2 className="text-xl sm:text-2xl font-semibold">No orders found</h2>
+        <p className="mt-2 text-sm sm:text-base">Start shopping to see your order history!</p>
       </div>
     );
   }
@@ -73,17 +73,17 @@ const OrderHistory: React.FC = () => {
   const reversedOrders = [...orders].reverse();
 
   return (
-    <div className="container mx-auto px-4 py-10 bg-gray-50 min-h-screen">
-      <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">Your Orders</h1>
+    <div className="container mx-auto px-2 sm:px-4 py-10 bg-gray-50 min-h-screen">
+      <h1 className="text-2xl sm:text-4xl font-bold mb-8 text-center text-gray-800">Your Orders</h1>
 
-      <div className="grid gap-8">
+      <div className="flex flex-col gap-6">
         {reversedOrders.map((order) => (
           <div
             key={order.orderId}
             onClick={() => handleOrderClick(order.orderId)}
-            className="bg-white shadow-xl rounded-2xl transition-all hover:scale-[1.01] hover:shadow-2xl cursor-pointer border border-gray-100"
+            className="bg-white shadow-md rounded-2xl transition-all hover:scale-[1.01] hover:shadow-xl cursor-pointer border border-gray-100"
           >
-            <div className="flex justify-between items-start px-6 pt-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-4 sm:px-6 pt-4 sm:pt-6 space-y-2 sm:space-y-0">
               <div>
                 <p className="text-base font-medium text-gray-600">Order #{order.orderId}</p>
                 <p className="text-sm text-gray-400">
@@ -93,29 +93,33 @@ const OrderHistory: React.FC = () => {
               <OrderStatusBadge status={order.status} />
             </div>
 
-            <div className="px-6 py-4 divide-y divide-gray-200">
+            <div className="px-4 sm:px-6 py-4 divide-y divide-gray-200">
               {order.items?.map((item: any) => (
                 <div
                   key={item.id}
-                  className="flex justify-between items-center py-3"
+                  className="flex flex-wrap justify-between items-center py-3 gap-y-2"
                 >
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
                     <img
                       src={item.imageUrl}
                       alt={item.name}
-                      className="h-16 w-16 object-cover rounded-md border"
+                      className="h-14 w-14 sm:h-16 sm:w-16 object-cover rounded-md border"
                     />
-                    <div className="max-w-xs">
-                      <p className="font-semibold text-base text-gray-800 truncate">{item.name}</p>
-                      <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-sm sm:text-base text-gray-800 truncate max-w-[200px] sm:max-w-xs">
+                        {item.name}
+                      </p>
+                      <p className="text-xs sm:text-sm text-gray-500">Qty: {item.quantity}</p>
                     </div>
                   </div>
-                  <p className="text-base font-semibold text-green-700">₹{item.totalPrice.toFixed(2)}</p>
+                  <p className="text-sm sm:text-base font-semibold text-green-700 whitespace-nowrap">
+                    ₹{item.totalPrice.toFixed(2)}
+                  </p>
                 </div>
               ))}
             </div>
 
-            <div className="px-6 py-4 border-t bg-gray-100 flex justify-between items-center rounded-b-2xl">
+            <div className="px-4 sm:px-6 py-4 border-t bg-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center rounded-b-2xl gap-2 sm:gap-0">
               {order.status === 'ACCEPTED' ? (
                 <button
                   className="text-sm text-blue-600 flex items-center hover:underline"
@@ -130,7 +134,7 @@ const OrderHistory: React.FC = () => {
                 <span />
               )}
 
-              <p className="text-lg font-bold text-gray-800">
+              <p className="text-base sm:text-lg font-bold text-gray-800">
                 Total: ₹{order.totalAmount.toFixed(2)}
               </p>
             </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Filter, ArrowDownUp } from 'lucide-react';
-import { fetchProducts, fetchShopkeeperProducts, setSearchTerm } from '../store/slices/productSlice';
+import { fetchProducts, fetchShopkeeperProducts } from '../store/slices/productSlice';
 import { RootState, AppDispatch } from '../store';
 
 const ProductList: React.FC = () => {
@@ -11,6 +11,8 @@ const ProductList: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSort, setSelectedSort] = useState('');
   const [viewShopkeeperProducts, setViewShopkeeperProducts] = useState(false);
+
+  const userRole = localStorage.getItem('userRole'); // 'shopkeeper' or 'customer'
 
   const loadProducts = useCallback(() => {
     if (viewShopkeeperProducts) {
@@ -27,8 +29,7 @@ const ProductList: React.FC = () => {
   const categories = [...new Set(products.map(product => product.category))];
 
   let filteredProducts = products.filter(product => {
-    const matchesCategory = selectedCategory === '' || product.category === selectedCategory;
-    return matchesCategory;
+    return selectedCategory === '' || product.category === selectedCategory;
   });
 
   if (selectedSort === 'price-low-high') {
@@ -43,18 +44,9 @@ const ProductList: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
+      <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={i}
-            className="animate-pulse bg-white rounded-xl shadow-lg h-72"
-          >
-            <div className="h-48 bg-gray-200 rounded-t-xl" />
-            <div className="p-4 space-y-2">
-              <div className="h-4 bg-gray-300 rounded w-3/4" />
-              <div className="h-4 bg-gray-300 rounded w-1/2" />
-            </div>
-          </div>
+          <div key={i} className="animate-pulse bg-white rounded-xl shadow-lg h-60" />
         ))}
       </div>
     );
@@ -63,7 +55,7 @@ const ProductList: React.FC = () => {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
+        <div className="bg-red-100 text-red-700 border border-red-300 px-4 py-3 rounded">
           {error}
         </div>
       </div>
@@ -71,7 +63,7 @@ const ProductList: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-green-50 py-10 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-white to-green-50 py-10 px-4 sm:px-6 lg:px-8 mt-4">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <h2 className="text-3xl font-bold text-green-700">Our Products</h2>
@@ -107,26 +99,30 @@ const ProductList: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
           {filteredProducts.length > 0 ? (
             filteredProducts.map(product => (
               <div
                 key={product.id}
-                className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100 overflow-hidden"
+                className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100 overflow-hidden flex flex-col"
               >
                 <Link to={`/product/${product.id}`}>
                   <img
                     src={product.imageUrl}
                     alt={product.name}
-                    className="w-full h-48 object-cover rounded-t-2xl"
+                    className="w-full h-32 sm:h-36 md:h-40 object-cover rounded-t-2xl transition-transform duration-300 hover:scale-105"
                   />
                 </Link>
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-1 truncate">{product.name}</h3>
-                  <p className="text-gray-600 text-sm mb-2 line-clamp-2">{product.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-green-600 font-bold text-base">₹{product.price.toFixed(2)}</span>
-                    <span className="text-sm text-gray-500">{product.stock} in stock</span>
+                <div className="p-2 flex flex-col justify-between flex-grow">
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-800 mb-1 truncate">{product.name}</h3>
+                    <p className="text-gray-600 text-xs mb-1 line-clamp-2">{product.description}</p>
+                  </div>
+                  <div className="flex justify-between items-center mt-auto text-xs">
+                    <span className="text-green-600 font-bold">₹{product.price.toFixed(2)}</span>
+                    {userRole === 'shopkeeper' && (
+                      <span className="text-gray-500">{product.stock} left</span>
+                    )}
                   </div>
                 </div>
               </div>
