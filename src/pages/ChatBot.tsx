@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { BotIcon, X } from "lucide-react";
 
-const ai = new GoogleGenerativeAI("AIzaSyBAKnPo6A-bvAsuQbeMbBFgDl3bF9V-3TM");
+
+const ai = new GoogleGenerativeAI(process.env.VITE_GEMINI_API_KEY);
 
 const quickOptions = [
   "Where is my order?",
