@@ -1,3 +1,4 @@
+
 .env
 
 # Logs
@@ -25,3 +26,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+src/pages/ChatBot.tsx
+package-lock.json
+package.json
