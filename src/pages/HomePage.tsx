@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Truck, Star, Shield, BadgePercent, Package, CheckCircle } from 'lucide-react';
 import HomeProductList from './HomeProductList';
 import Footer from './Footer';
+import ChatBot from "./ChatBot";
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -173,6 +174,7 @@ const HomePage: React.FC = () => {
           </button>
         </div>
       </div> */}
+      <ChatBot />
       <Footer />
     </div>
   );
