@@ -58,36 +58,36 @@ const Navbar: React.FC = () => {
               <span className="font-poppins tracking-tight">Grofila</span>
             </Link>
             {/* Search */}
-<div className="relative w-full md:w-1/3 px-4 md:px-0 mb-4 md:mb-0">
-  <Search className="absolute left-5 top-2.5 text-gray-400 w-5 h-5" />
-  <input
-    type="text"
-    placeholder="Search Products..."
-    value={searchTerm}
-    onChange={handleSearch}
-    className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-full focus:ring-2 focus:ring-green-500 focus:outline-none transition"
-  />
-  {searchTerm && (
-    <div className="absolute bg-white border rounded-lg mt-2 shadow-lg w-full max-h-64 overflow-auto z-50">
-      {filteredProducts.length > 0 ? (
-        filteredProducts.map((product) => (
-          <div
-            key={product.id}
-            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-            onClick={() => {
-              navigate(`/product/${product.id}`);
-              dispatch(setSearchTerm(""));
-            }}
-          >
-            {product.name}
-          </div>
-        ))
-      ) : (
-        <p className="px-4 py-2 text-gray-500">No products found</p>
-      )}
-    </div>
-  )}
-</div>
+            <div className="relative w-2/5">
+              <Search className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search Products..."
+                value={searchTerm}
+                onChange={handleSearch}
+                className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-full focus:ring-2 focus:ring-green-500 focus:outline-none transition"
+              />
+              {searchTerm && (
+                <div className="absolute bg-white border rounded-lg mt-2 shadow-lg w-full max-h-64 overflow-auto z-50">
+                  {filteredProducts.length > 0 ? (
+                    filteredProducts.map((product) => (
+                      <div
+                        key={product.id}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => {
+                          navigate(`/product/${product.id}`);
+                          dispatch(setSearchTerm(""));
+                        }}
+                      >
+                        {product.name}
+                      </div>
+                    ))
+                  ) : (
+                    <p className="px-4 py-2 text-gray-500">No products found</p>
+                  )}
+                </div>
+              )}
+            </div>
 
             
 
@@ -206,6 +206,9 @@ const Navbar: React.FC = () => {
             Login
           </Link>
         )}
+         <button onClick={handleLogout}>
+                      <LogOut className="w-5 h-5 text-red-600 hover:text-red-700" />
+                    </button>
       </div>
     </>
   );
