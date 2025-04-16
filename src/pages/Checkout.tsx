@@ -4,6 +4,7 @@ import { RootState } from "../store";
 import { useNavigate } from "react-router-dom";
 import { clearCart } from "../store/slices/cartSlice";
 import axios from "axios";
+import { MapPin, Phone, Mail, User } from "lucide-react";
 
 const Checkout: React.FC = () => {
   const dispatch = useDispatch();
@@ -18,7 +19,11 @@ const Checkout: React.FC = () => {
     name: storedUser.name || "",
     email: storedUser.email || "",
     phone: "",
-    address: "",
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    state: "",
+    pincode: "",
   });
 
   useEffect(() => {
@@ -44,6 +49,8 @@ const Checkout: React.FC = () => {
         (product: any) => product.productId === cartItems[0].productId
       )?.shopkeeperId;
 
+      const fullAddress = `${formData.addressLine1}, ${formData.addressLine2}, ${formData.city}, ${formData.state}, ${formData.pincode}`;
+
       const orderData = {
         status: "pending",
         customer_id: storedUser.id,
@@ -51,7 +58,7 @@ const Checkout: React.FC = () => {
         orderDate: new Date().toISOString(),
         totalAmount,
         cartItems,
-        address: formData.address,
+        address: fullAddress,
         phone: formData.phone,
       };
 
@@ -76,7 +83,7 @@ const Checkout: React.FC = () => {
   };
 
   const handlePayment = async () => {
-    if (!formData.address || !formData.phone) {
+    if (!formData.addressLine1 || !formData.city || !formData.state || !formData.pincode || !formData.phone) {
       alert("Please fill in all required fields.");
       return;
     }
@@ -120,32 +127,40 @@ const Checkout: React.FC = () => {
     <div className="max-w-6xl mx-auto mt-24 p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
       {/* Address Section */}
       <div className="md:col-span-2 bg-white shadow-lg rounded-xl p-6 space-y-6">
-        <h2 className="text-2xl font-semibold text-gray-800 border-b pb-2">Delivery Address</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 border-b pb-2 flex items-center gap-2">
+          <MapPin className="w-5 h-5 text-green-600" /> Delivery Address
+        </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-  <div>
-    <label className="block font-medium text-sm mb-1">Full Name</label>
-    <input
-      type="text"
-      className="w-full p-2 border rounded bg-gray-100"
-      value={formData.name}
-      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-    />
-  </div>
+          <div>
+            <label className="block font-medium text-sm mb-1 flex items-center gap-1">
+              <User className="w-4 h-4" /> Full Name
+            </label>
+            <input
+              type="text"
+              className="w-full p-2 border rounded bg-gray-100"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            />
+          </div>
 
-  <div>
-    <label className="block font-medium text-sm mb-1">Email</label>
-    <input
-      type="email"
-      className="w-full p-2 border rounded bg-gray-100"
-      value={formData.email}
-      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-    />
-  </div>
-</div>
+          <div>
+            <label className="block font-medium text-sm mb-1 flex items-center gap-1">
+              <Mail className="w-4 h-4" /> Email
+            </label>
+            <input
+              type="email"
+              className="w-full p-2 border rounded bg-gray-100"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            />
+          </div>
+        </div>
 
         <div>
-          <label className="block font-medium text-sm mb-1">Phone Number</label>
+          <label className="block font-medium text-sm mb-1 flex items-center gap-1">
+            <Phone className="w-4 h-4" /> Phone Number
+          </label>
           <input
             type="tel"
             className="w-full p-2 border rounded"
@@ -155,14 +170,41 @@ const Checkout: React.FC = () => {
           />
         </div>
 
-        <div>
-          <label className="block font-medium text-sm mb-1">Address</label>
-          <textarea
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input
+            type="text"
             className="w-full p-2 border rounded"
-            rows={3}
-            placeholder="Enter your full delivery address"
-            value={formData.address}
-            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+            placeholder="Address Line 1"
+            value={formData.addressLine1}
+            onChange={(e) => setFormData({ ...formData, addressLine1: e.target.value })}
+          />
+          <input
+            type="text"
+            className="w-full p-2 border rounded"
+            placeholder="Address Line 2"
+            value={formData.addressLine2}
+            onChange={(e) => setFormData({ ...formData, addressLine2: e.target.value })}
+          />
+          <input
+            type="text"
+            className="w-full p-2 border rounded"
+            placeholder="City"
+            value={formData.city}
+            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+          />
+          <input
+            type="text"
+            className="w-full p-2 border rounded"
+            placeholder="State"
+            value={formData.state}
+            onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+          />
+          <input
+            type="text"
+            className="w-full p-2 border rounded"
+            placeholder="Pincode"
+            value={formData.pincode}
+            onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
           />
         </div>
 
