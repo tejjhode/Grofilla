@@ -169,46 +169,37 @@ const ShopkeeperDashboard: React.FC = () => {
         </ResponsiveContainer>
       </div>
 
-       {/* Top Selling Products */}
-       <div className="bg-white rounded-2xl shadow-lg p-5 mb-8">
-        <div className="flex items-center mb-4 gap-2">
-          <TrendingUp className="text-purple-500" />
-          <h2 className="text-lg font-semibold text-gray-700">Top Selling Products</h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {topSellingProducts.map((product, idx) => (
-            <div key={idx} className="bg-gray-50 rounded-xl p-4 flex items-center shadow-sm">
-              <img src={product.imageUrl} alt={product.name} className="h-16 w-16 object-cover rounded-lg mr-4" />
-              <div>
-                <h3 className="font-semibold text-gray-800">{product.name}</h3>
-                <p className="text-sm text-gray-500">Sold: {product.quantity} pcs</p>
-                <p className="text-sm text-green-600 font-semibold">₹{product.revenue.toFixed(2)}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Tabs + Search */}
+<div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-3">
+  {/* Tabs */}
+  <div className="flex border-b border-gray-200">
+    {['pending', 'all'].map((tab) => (
+      <button
+        key={tab}
+        className={`px-6 py-2 font-medium capitalize ${
+          selectedTab === tab
+            ? 'text-green-600 border-b-2 border-green-600'
+            : 'text-gray-600 hover:text-gray-900'
+        }`}
+        onClick={() => setSelectedTab(tab as 'pending' | 'all')}
+      >
+        {tab === 'pending' ? 'Pending Orders' : 'All Orders'}
+      </button>
+    ))}
+  </div>
 
-      {/* Low Stock Section */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 mb-10">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">⚠️ Low Stock Products</h2>
-        {lowStockProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {lowStockProducts.map(product => (
-              <div key={product.id} className="flex items-center bg-red-50 p-4 rounded-xl shadow-sm border border-red-300">
-                <img src={product.imageUrl} alt={product.name} className="h-16 w-16 object-cover rounded-lg mr-4" />
-                <div>
-                  <p className="font-medium text-gray-800">{product.name}</p>
-                  <p className="text-sm text-red-600 font-semibold">Stock: {product.stock}</p>
-                  <p className="text-sm text-gray-500">₹{product.price.toFixed(2)}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500">All products have sufficient stock 👌</p>
-        )}
-      </div>
+  {/* Search Input */}
+  <div className="relative w-full md:w-1/3">
+    <input
+      type="text"
+      placeholder="Search by product or order ID..."
+      className="w-full py-2 pl-10 pr-4 border rounded-xl shadow-sm focus:outline-none focus:ring focus:border-green-300"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+    />
+    <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+  </div>
+</div>
 
       {/* Orders List */}
       <div className="bg-white rounded-2xl shadow overflow-hidden">
