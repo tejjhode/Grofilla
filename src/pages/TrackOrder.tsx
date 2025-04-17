@@ -6,14 +6,29 @@ import L from 'leaflet';
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 
+// Custom Icons
 const bikeIcon = new L.Icon({
   iconUrl: 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png',
-  iconSize: [40, 40],
-  iconAnchor: [20, 40],
-  popupAnchor: [0, -40],
+  iconSize: [45, 45],
+  iconAnchor: [22, 45],
+  popupAnchor: [0, -45],
 });
 
-const Routing = ({ userLocation, orderLocation }: { userLocation: { lat: number, lng: number }, orderLocation: { lat: number, lng: number } }) => {
+const userIcon = new L.Icon({
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+  iconSize: [35, 35],
+  iconAnchor: [17, 35],
+  popupAnchor: [0, -35],
+});
+
+// Routing Component
+const Routing = ({
+  userLocation,
+  orderLocation,
+}: {
+  userLocation: { lat: number; lng: number };
+  orderLocation: { lat: number; lng: number };
+}) => {
   const map = useMap();
 
   useEffect(() => {
@@ -23,8 +38,14 @@ const Routing = ({ userLocation, orderLocation }: { userLocation: { lat: number,
           L.latLng(userLocation.lat, userLocation.lng),
           L.latLng(orderLocation.lat, orderLocation.lng),
         ],
-        routeWhileDragging: true,
-        createMarker: () => null, // Remove default markers to keep only custom ones
+        routeWhileDragging: false,
+        draggableWaypoints: false,
+        addWaypoints: false,
+        show: false, // hides default directions box
+        createMarker: () => null, // prevents default marker
+        lineOptions: {
+          styles: [{ color: '#00C853', weight: 5 }],
+        },
       }).addTo(map);
 
       return () => {
@@ -36,9 +57,13 @@ const Routing = ({ userLocation, orderLocation }: { userLocation: { lat: number,
   return null;
 };
 
+// Main Component
 const TrackOrder: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
-  const [orderLocation, setOrderLocation] = useState<{ lat: number; lng: number }>({ lat: 26.2183, lng: 78.1828 }); // Default: Gwalior
+  const [orderLocation, setOrderLocation] = useState({
+    lat: 26.20870245125601,
+    lng: 78.18941853897715,
+  });
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
@@ -54,6 +79,7 @@ const TrackOrder: React.FC = () => {
         console.error('Error fetching tracking data:', error);
       }
     };
+
     fetchTrackingData();
     const interval = setInterval(fetchTrackingData, 5000);
     return () => clearInterval(interval);
@@ -75,21 +101,48 @@ const TrackOrder: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full h-screen ">
-      <h2 className="text-2xl font-bold text-center py-4 bg-white shadow-lg">Track Your Order</h2>
+    <div className="w-full h-screen bg-gradient-to-br from-green-50 to-white relative">
+      <div className="bg-white shadow-md py-4 text-center text-2xl font-bold text-green-700 sticky top-0 z-10">
+        🛵 Live Order Tracking
+      </div>
+
       {userLocation ? (
-        <MapContainer center={[orderLocation.lat, orderLocation.lng]} zoom={15} className="w-full h-full">
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          <Marker position={[orderLocation.lat, orderLocation.lng]} icon={bikeIcon}>
-            <Popup>Your order is here!</Popup>
-          </Marker>
-          <Marker position={[userLocation.lat, userLocation.lng]}>
-            <Popup>Your location</Popup>
-          </Marker>
-          <Routing userLocation={userLocation} orderLocation={orderLocation} />
-        </MapContainer>
+        <div className="relative h-[85vh] w-full">
+          <MapContainer
+            center={[orderLocation.lat, orderLocation.lng]}
+            zoom={14}
+            className="w-full h-full z-0 rounded-lg shadow-lg"
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <Marker position={[orderLocation.lat, orderLocation.lng]} icon={bikeIcon}>
+              <Popup>Your order is on the way!</Popup>
+            </Marker>
+            <Marker position={[userLocation.lat, userLocation.lng]} icon={userIcon}>
+              <Popup>This is your location</Popup>
+            </Marker>
+            <Routing userLocation={userLocation} orderLocation={orderLocation} />
+          </MapContainer>
+
+          {/* Floating Card */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-11/12 max-w-md bg-white rounded-xl p-4 shadow-2xl border border-green-100">
+            <div className="flex items-center gap-3">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/8062/8062538.png"
+                alt="Delivery Guy"
+                className="w-12 h-12"
+              />
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-800">Your order is being delivered</h3>
+                <p className="text-sm text-gray-500">Estimated arrival in 10-15 mins</p>
+              </div>
+            </div>
+            <div className="mt-3 text-sm text-gray-700">
+              Delivery from: <span className="font-medium text-green-600">GroFilla Mart</span>
+            </div>
+          </div>
+        </div>
       ) : (
-        <p className="text-center text-gray-500">Loading order location...</p>
+        <p className="text-center text-gray-500 mt-10">Fetching your location...</p>
       )}
     </div>
   );

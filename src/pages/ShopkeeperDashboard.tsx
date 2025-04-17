@@ -131,7 +131,7 @@ const ShopkeeperDashboard: React.FC = () => {
   }));
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 mt-4">
       <h1 className="text-3xl font-bold mb-6">📦 Shopkeeper Dashboard</h1>
 
       {/* Stats */}
@@ -167,6 +167,47 @@ const ShopkeeperDashboard: React.FC = () => {
             <Bar dataKey="total" fill="#6366f1" />
           </BarChart>
         </ResponsiveContainer>
+      </div>
+
+       {/* Top Selling Products */}
+       <div className="bg-white rounded-2xl shadow-lg p-5 mb-8">
+        <div className="flex items-center mb-4 gap-2">
+          <TrendingUp className="text-purple-500" />
+          <h2 className="text-lg font-semibold text-gray-700">Top Selling Products</h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {topSellingProducts.map((product, idx) => (
+            <div key={idx} className="bg-gray-50 rounded-xl p-4 flex items-center shadow-sm">
+              <img src={product.imageUrl} alt={product.name} className="h-16 w-16 object-cover rounded-lg mr-4" />
+              <div>
+                <h3 className="font-semibold text-gray-800">{product.name}</h3>
+                <p className="text-sm text-gray-500">Sold: {product.quantity} pcs</p>
+                <p className="text-sm text-green-600 font-semibold">₹{product.revenue.toFixed(2)}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Low Stock */}
+      <div className="bg-white rounded-2xl shadow-lg p-6 mb-10">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">⚠️ Low Stock Products</h2>
+        {lowStockProducts.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {lowStockProducts.map(product => (
+              <div key={product.id} className="flex items-center bg-red-50 p-4 rounded-xl shadow-sm border border-red-300">
+                <img src={product.imageUrl} alt={product.name} className="h-16 w-16 object-cover rounded-lg mr-4" />
+                <div>
+                  <p className="font-medium text-gray-800">{product.name}</p>
+                  <p className="text-sm text-red-600 font-semibold">Stock: {product.stock}</p>
+                  <p className="text-sm text-gray-500">₹{product.price.toFixed(2)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500">All products have sufficient stock 👌</p>
+        )}
       </div>
 
       {/* Tabs + Search */}
