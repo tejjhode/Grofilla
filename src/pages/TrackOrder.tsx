@@ -101,7 +101,7 @@ const TrackOrder: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full h-screen bg-gradient-to-br from-green-50 to-white relative">
+    <div className="w-full h-screen bg-gradient-to-br from-green-50 to-white relative mt-6">
       <div className="bg-white shadow-md py-4 text-center text-2xl font-bold text-green-700 sticky top-0 z-10">
         🛵 Live Order Tracking
       </div>
