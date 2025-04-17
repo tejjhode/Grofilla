@@ -90,7 +90,7 @@ export const fetchShopkeeperOrders = createAsyncThunk<
   // console.log("Shopkeeper ID:", shopkeeperId);
     if (!shopkeeperId) return rejectWithValue("Shopkeeper ID is missing.");
     //  console.log("Shopkeeper ID:", shopkeeperId);
-    const response = await api.get(`/orders/shopkeeper/${shopkeeperId}`);
+    const response = await api.get(`/orders/shopkeeper/16`);
     // console.log(response.data);
     return response.data;
   } catch (error: any) {

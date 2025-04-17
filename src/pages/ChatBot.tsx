@@ -55,7 +55,7 @@ Always answer in a friendly, polite, and easy-to-understand tone, suitable for I
 
 User query: "${text}"
 Answer with helpful suggestions or solutions.Do not ask futher question in detailed.
-if user ask to suggest the product ask only budgest and purpose only.
+if user ask to suggest the product ask only budgest and purpose only. Provide Response in context to above User Query.
 `;
 
       // Get the response from Gemini

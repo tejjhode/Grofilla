@@ -1,26 +1,33 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { Filter, ArrowDownUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Filter, ArrowDownUp, Pencil } from 'lucide-react';
 import { fetchProducts, fetchShopkeeperProducts } from '../store/slices/productSlice';
 import { RootState, AppDispatch } from '../store';
 
 const ProductList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const { products, loading, error } = useSelector((state: RootState) => state.products);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSort, setSelectedSort] = useState('');
-  const [viewShopkeeperProducts, setViewShopkeeperProducts] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
-  const userRole = localStorage.getItem('userRole'); // 'shopkeeper' or 'customer'
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    const user = JSON.parse(userData);
+    const role = user?.role;
+    console.log(role)
+    setUserRole(role);
+  }, []);
 
   const loadProducts = useCallback(() => {
-    if (viewShopkeeperProducts) {
+    if (userRole === 'SHOPKEEPER') {
       dispatch(fetchShopkeeperProducts());
     } else {
       dispatch(fetchProducts());
     }
-  }, [dispatch, viewShopkeeperProducts]);
+  }, [dispatch, userRole]);
 
   useEffect(() => {
     loadProducts();
@@ -104,15 +111,25 @@ const ProductList: React.FC = () => {
             filteredProducts.map(product => (
               <div
                 key={product.id}
-                className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100 overflow-hidden flex flex-col"
+                className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100 overflow-hidden flex flex-col relative cursor-pointer"
+                onClick={() => {
+                  if (userRole === 'SHOPKEEPER') {
+                    navigate(`/add-product`);
+                  } else {
+                    navigate(`/product/${product.id}`);
+                  }
+                }}
               >
-                <Link to={`/product/${product.id}`}>
-                  <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className="w-full h-32 sm:h-36 md:h-40 object-cover rounded-t-2xl transition-transform duration-300 hover:scale-105"
-                  />
-                </Link>
+                {userRole === 'SHOPKEEPER' && (
+                  <div className="absolute top-2 right-2 bg-white p-1 rounded-full shadow">
+                    <Pencil className="h-5 w-5 text-green-600" />
+                  </div>
+                )}
+                <img
+                  src={product.imageUrl}
+                  alt={product.name}
+                  className="w-full h-32 sm:h-36 md:h-40 object-cover rounded-t-2xl transition-transform duration-300 hover:scale-105"
+                />
                 <div className="p-2 flex flex-col justify-between flex-grow">
                   <div>
                     <h3 className="text-sm font-semibold text-gray-800 mb-1 truncate">{product.name}</h3>
@@ -120,7 +137,7 @@ const ProductList: React.FC = () => {
                   </div>
                   <div className="flex justify-between items-center mt-auto text-xs">
                     <span className="text-green-600 font-bold">₹{product.price.toFixed(2)}</span>
-                    {userRole === 'shopkeeper' && (
+                    {userRole === 'SHOPKEEPER' && (
                       <span className="text-gray-500">{product.stock} left</span>
                     )}
                   </div>

@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   ShoppingCart, User, LogOut, MapPin, ClipboardList,
   ShoppingBasket, Info, Search, UserPlus, LogIn,
-  Home, LayoutDashboard, X
+  Home, LayoutDashboard, X, Plus
 } from "lucide-react";
 import { RootState } from "../store";
 import { logout } from "../store/slices/authSlice";
@@ -47,15 +47,15 @@ const Navbar: React.FC = () => {
           </Link>
 
           {/* Search Bar */}
-          <div className="relative w-2/5  md:block">
-            <Search className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search Products..."
-              value={searchTerm}
-              onChange={handleSearch}
-              className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-full focus:ring-2 focus:ring-green-500 focus:outline-none shadow-sm"
-            />
+          <div className="relative w-3/5 md:w-1/4">
+  <Search className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
+  <input
+    type="text"
+    placeholder="Search Products..."
+    value={searchTerm}
+    onChange={handleSearch}
+    className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-full focus:ring-2 focus:ring-green-500 focus:outline-none shadow-sm"
+  />
             {searchTerm && (
               <div className="absolute bg-white border rounded-lg mt-2 shadow-lg w-full max-h-64 overflow-auto z-50">
                 {filteredProducts.length > 0 ? (
@@ -125,7 +125,14 @@ const Navbar: React.FC = () => {
                   </>
                 )}
                 {user.role === "SHOPKEEPER" && (
-                  <Link to="/dashboard" className="text-gray-700 hover:text-green-600">Dashboard</Link>
+                  <>
+                    <Link to="/dashboard" className="text-gray-700 hover:text-green-600 flex gap-1">
+                      <LayoutDashboard className="w-5 h-4" /> Dashboard
+                    </Link>
+                    <Link to="/add-product" className="flex items-center gap-2 text-gray-700 hover:text-green-600">
+                      <Plus className="w-4 h-4" /> Add Product
+                    </Link>
+                  </>
                 )}
                 <div className="flex items-center gap-2">
                   <User className="w-5 h-5 text-gray-700" />
@@ -185,6 +192,10 @@ const Navbar: React.FC = () => {
             <Link to="/dashboard" className="flex flex-col items-center text-xs text-gray-700 hover:text-green-600">
               <LayoutDashboard className="w-5 h-5 mb-0.5" />
               Dashboard
+            </Link>
+            <Link to="/add-product" className="flex flex-col items-center text-xs text-gray-700 hover:text-green-600">
+              <Plus className="w-5 h-5 mb-0.5" />
+              Add Product
             </Link>
             <button onClick={handleLogout}>
               <LogOut className="w-5 h-5 text-red-600 hover:text-red-700" />

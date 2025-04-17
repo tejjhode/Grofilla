@@ -19,6 +19,7 @@ import TrackOrder from './pages/TrackOrder';
 import OrderDetails from './pages/OrderDetails';
 import Checkout from './pages/Checkout';
 import AboutUs from './pages/AboutUs';
+import ForgetPassword from './pages/ ForgetPassword';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/about" element={<AboutUs />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/forgot-password" element={<ForgetPassword />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/products" element={<ProductList />} />
               <Route path="/add-product" element={<AddProduct />} />
