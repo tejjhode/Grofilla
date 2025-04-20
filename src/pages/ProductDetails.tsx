@@ -163,7 +163,7 @@ const ProductDetails: React.FC = () => {
 
       {/* Recommended Products */}
       <div className="mt-10">
-        <h2 className="text-xl font-semibold mb-4">Recommended Products</h2>
+        <h2 className="text-xl font-semibold mb-4">You might also like</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {recommendationsLoading ? (
             <div className="col-span-full text-center text-gray-500">Loading...</div>
