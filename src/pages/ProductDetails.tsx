@@ -57,7 +57,7 @@ const ProductDetails: React.FC = () => {
       if (!id) return;
       setRecommendationsLoading(true);
       try {
-        const { data } = await axios.post('http://68.183.93.129:8888/recommendations', {
+        const { data } = await axios.post('https://grofillaml.tejaswa.tech/recommendations/', {
           product_id: id,
           top_n: 10,
         });
