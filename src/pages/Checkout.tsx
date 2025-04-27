@@ -63,7 +63,7 @@ const Checkout: React.FC = () => {
       };
 
       const response = await axios.post(
-        `https://tejas.yugal.tech/orders/place/${storedUser.id}/16`,
+        `https://tejas.yugal.tech/orders/place/${storedUser.id}/7`,
         orderData
       );
 

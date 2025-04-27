@@ -38,8 +38,8 @@ export const placeOrder = createAsyncThunk<
 
       const shopkeeperId = getState().orders.shopkeeperId;
       if (!shopkeeperId) return rejectWithValue("Shopkeeper ID not found. Please select a product first.");
-
-      const response = await api.post(`/orders/place/${customerId}/${shopkeeperId}`, {}, {
+   console.log(customerId,shopkeeperId)
+      const response = await api.post(`/orders/place/${customerId}/7`, {}, {
         headers: { "Content-Type": "application/json", Accept: "application/json" },
       });
 
