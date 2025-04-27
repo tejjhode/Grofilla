@@ -68,7 +68,7 @@ const Checkout: React.FC = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        await axios.delete(`https://tejas.yugal.tech/api/cart/user/16/clear`);
+        await axios.delete(`https://tejas.yugal.tech/api/cart/user/7/clear`);
         dispatch(clearCart());
         navigate("/orders");
       } else {
