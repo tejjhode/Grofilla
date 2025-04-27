@@ -31,6 +31,7 @@ const ShopkeeperDashboard: React.FC = () => {
     if (shopkeeperId) {
       dispatch(fetchShopkeeperOrders());
       dispatch(fetchShopkeeperProducts(shopkeeperId));
+      console.log(shopkeeperId)
     }
   }, [dispatch, shopkeeperId]);
 

@@ -85,12 +85,9 @@ export const fetchShopkeeperOrders = createAsyncThunk<
   { state: RootState; rejectValue: string }
 >("orders/fetchShopkeeperOrders", async (_, { getState, rejectWithValue }) => {
   try {
-    const shopkeeperData = localStorage.getItem('user');
-  const shopkeeperId =shopkeeperData ? JSON.parse(shopkeeperData).id : null;
-  // console.log("Shopkeeper ID:", shopkeeperId);
-    if (!shopkeeperId) return rejectWithValue("Shopkeeper ID is missing.");
+
     //  console.log("Shopkeeper ID:", shopkeeperId);
-    const response = await api.get(`/orders/shopkeeper/16`);
+    const response = await api.get(`/orders/shopkeeper/7`);
     // console.log(response.data);
     return response.data;
   } catch (error: any) {

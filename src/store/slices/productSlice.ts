@@ -48,7 +48,7 @@ export const fetchShopkeeperProducts = createAsyncThunk<Product[], void, { rejec
         return rejectWithValue("Shopkeeper ID not found. Please log in.");
       }
 
-      const response = await api.get(`/products/shopkeeper/16`);
+      const response = await api.get(`/products/shopkeeper/7`);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch shopkeeper products');
@@ -90,7 +90,7 @@ export const addProduct = createAsyncThunk<Product, Product, { rejectValue: stri
         return rejectWithValue("Shopkeeper ID not found. Please log in.");
       }
 
-      const response = await api.post(`/products/add/16`, newProduct);
+      const response = await api.post(`/products/add/7`, newProduct);
       return response.data;
 
     } catch (error: any) {
