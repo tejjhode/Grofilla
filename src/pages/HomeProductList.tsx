@@ -4,13 +4,14 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { fetchProducts } from "../store/slices/productSlice";
 import { RootState, AppDispatch } from "../store";
-import { Flame, Sparkles, ShoppingCart, Tag } from "lucide-react";
+import { Flame, Sparkles, Tag } from "lucide-react";
 
 const HomeProductList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { products, loading, error } = useSelector((state: RootState) => state.products);
-  const user = useSelector((state: RootState) => state.auth.user); // Assuming `auth.user` contains role info
+  const user = useSelector((state: RootState) => state.auth.user);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   const loadProducts = useCallback(() => {
     dispatch(fetchProducts());
@@ -19,6 +20,17 @@ const HomeProductList: React.FC = () => {
   useEffect(() => {
     loadProducts();
   }, [loadProducts]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640); // Tailwind sm breakpoint
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const getRandomProducts = (count: number) => {
     return [...products].sort(() => Math.random() - 0.5).slice(0, count);
@@ -32,9 +44,7 @@ const HomeProductList: React.FC = () => {
     if (!categorizedProducts[product.category]) {
       categorizedProducts[product.category] = [];
     }
-    if (categorizedProducts[product.category].length < 5) {
-      categorizedProducts[product.category].push(product);
-    }
+    categorizedProducts[product.category].push(product);
   });
 
   const renderProductCard = (product: any, badge?: string) => (
@@ -69,13 +79,6 @@ const HomeProductList: React.FC = () => {
           )}
         </div>
       </div>
-      {/* <motion.button
-        whileTap={{ scale: 0.9 }}
-        className="absolute bottom-3 right-3 bg-green-600 hover:bg-green-700 text-white rounded-full p-2 shadow-md"
-        onClick={() => console.log("Add to cart:", product.id)}
-      >
-        <ShoppingCart size={16} />
-      </motion.button> */}
     </motion.div>
   );
 
@@ -105,7 +108,7 @@ const HomeProductList: React.FC = () => {
 
   return (
     <div className="container mx-auto px-2 sm:px-4 py-10">
-      {/* Reuse sections for Top Selling, Trending, Categorized */}
+      {/* Top Selling Section */}
       <section className="mb-14">
         <h2 className="text-xl sm:text-3xl font-extrabold text-green-700 text-center flex items-center justify-center gap-2 mb-6">
           <Flame size={24} /> Top Selling
@@ -115,6 +118,7 @@ const HomeProductList: React.FC = () => {
         </div>
       </section>
 
+      {/* Trending Now Section */}
       <section className="mb-14">
         <h2 className="text-xl sm:text-3xl font-extrabold text-blue-600 text-center flex items-center justify-center gap-2 mb-6">
           <Sparkles size={24} /> Trending Now
@@ -124,6 +128,7 @@ const HomeProductList: React.FC = () => {
         </div>
       </section>
 
+      {/* Category Buttons */}
       <div className="flex flex-wrap justify-center gap-3 mb-10">
         <button
           onClick={() => setSelectedCategory(null)}
@@ -148,6 +153,7 @@ const HomeProductList: React.FC = () => {
         ))}
       </div>
 
+      {/* Products by Category */}
       {Object.entries(categorizedProducts)
         .filter(([category]) => !selectedCategory || selectedCategory === category)
         .map(([category, items]) => (
@@ -156,7 +162,7 @@ const HomeProductList: React.FC = () => {
               <Tag size={18} /> Best in {category}
             </h2>
             <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
-              {items.map((product) => renderProductCard(product))}
+              {items.slice(0, isMobile ? 6 : 5).map((product) => renderProductCard(product))}
             </div>
           </section>
         ))}
