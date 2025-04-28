@@ -32,7 +32,7 @@ const HomeProductList: React.FC = () => {
     if (!categorizedProducts[product.category]) {
       categorizedProducts[product.category] = [];
     }
-    if (categorizedProducts[product.category].length < 6) {
+    if (categorizedProducts[product.category].length < 5) {
       categorizedProducts[product.category].push(product);
     }
   });
